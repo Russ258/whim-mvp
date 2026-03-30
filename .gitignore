@@ -1,0 +1,18 @@
+node_modules/
+dist/
+build/
+.expo/
+*.tsbuildinfo
+
+# Environment files — never commit real secrets
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
