@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Salon {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String
+  city        String
+  address     String
+  rating      Float      @default(4.7)
+  distanceKm  Float
+  heroImage   String?
+  services    Service[]
+  slots       DealSlot[]
+  createdAt   DateTime   @default(now())
+}
+
+model Service {
+  id          Int        @id @default(autoincrement())
+  name        String
+  durationMin Int
+  basePrice   Int
+  salon       Salon      @relation(fields: [salonId], references: [id])
+  salonId     Int
+  slots       DealSlot[]
+}
+
+model DealSlot {
+  id              Int       @id @default(autoincrement())
+  salon           Salon     @relation(fields: [salonId], references: [id])
+  salonId         Int
+  service         Service   @relation(fields: [serviceId], references: [id])
+  serviceId       Int
+  startTime       DateTime
+  endTime         DateTime
+  discountPercent Int
+  price           Int
+  status          String    @default("AVAILABLE")
+  bookings        Booking[]
+  createdAt       DateTime  @default(now())
+}
+
+model Booking {
+  id            Int      @id @default(autoincrement())
+  slot          DealSlot @relation(fields: [slotId], references: [id])
+  slotId        Int
+  customerName  String
+  customerEmail String
+  status        String   @default("CONFIRMED")
+  paymentStatus String   @default("PAID")
+  notes         String?
+  createdAt     DateTime @default(now())
+}
+
+model NotificationPreference {
+  id        Int      @id @default(autoincrement())
+  email     String
+  wantsPush Boolean  @default(true)
+  wantsSms  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model PromoCode {
+  id              Int      @id @default(autoincrement())
+  code            String   @unique
+  description     String?
+  discountPercent Int
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+}
+
+model PaymentMethod {
+  id            Int    @id @default(autoincrement())
+  customerEmail String
+  brand         String
+  last4         String
+  expiryMonth   Int
+  expiryYear    Int
+  primary       Boolean @default(false)
+}

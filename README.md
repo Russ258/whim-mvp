@@ -1,116 +1,74 @@
 # Whim MVP
 
-Beauty, on demand. A monorepo containing the Whim mobile app and backend API.
+Last-minute salon booking experience built with Next.js (App Router), Prisma + SQLite, Tailwind, and server actions. The project ships three faces of Whim:
 
-```
-whim-mvp/
-├── apps/
-│   ├── mobile/      # Expo React Native (iOS + Android)
-│   └── server/      # Node.js + Express API
-├── packages/
-│   └── eslint-config/  # Shared ESLint rules
-├── tsconfig.base.json
-├── .prettierrc
-└── .eslintrc.js
-```
+- **Consumer shell** – landing hero, deal discovery, booking flow, past/upcoming bookings, saved cards, and notification opt-in
+- **Salon dashboard** – role-gated ops panel with daily calendar, slot management, and live stats
+- **Admin back office** – CRUD for salons/services, booking overrides, and promo code management
 
-## Prerequisites
+## Tech stack
 
-- **Node.js** 20+
-- **Yarn** 1.x (classic) — `npm install -g yarn`
-- **Expo CLI** — `npm install -g expo-cli`
-- **Xcode** (iOS simulator) or **Android Studio** (Android emulator)
-- A [Stripe](https://stripe.com) account with Connect enabled
+- Next.js 16 (App Router) + TypeScript
+- TailwindCSS (v4) with custom design tokens
+- Prisma ORM with SQLite storage
+- Server Actions for booking, auth, ops, and notification flows
+- Lucide icons, date-fns utilities
 
-## Setup
+## Getting started
 
 ```bash
-# Install all workspace dependencies from the root
-yarn install
+npm install
+npm run db:migrate   # runs `prisma migrate dev`
+npm run db:seed      # loads sample salons, services, slots, bookings, promos
+npm run dev
 ```
 
-### Server environment
+The app boots at [http://localhost:3000](http://localhost:3000).
 
-```bash
-cd apps/server
-cp .env.example .env
-# Edit .env and fill in your Stripe test keys
-```
+## Demo identities
 
-## Running the apps
+Use the lightweight role switcher at `/login` to toggle between personas. Passcodes are baked in for quick testing:
 
-### Mobile (Expo)
+| Role | Passcode | Notes |
+| --- | --- | --- |
+| Consumer | _none_ | Default landing + booking journey (Harper Bloom as demo user) |
+| Salon | `salon-daypass` | Unlocks `/salon` dashboard with slot creation + stats |
+| Admin | `admin-daypass` | Unlocks `/admin` for CRUD, overrides, and promo tools |
 
-```bash
-# From root
-yarn mobile
+## Feature tour
 
-# Or target a specific platform
-yarn workspace @whim/mobile ios
-yarn workspace @whim/mobile android
-```
+### Consumer experience
+- Hero/landing story with CTA, featured partners, and brand styling
+- Location picker + time filter (Now, Next 2h, Today) that narrows live deals
+- Deal feed cards surface salon rating, distance, pricing, and slot metadata
+- Booking drawer simulates payment, confirms, and logs an email stub on the server
+- `/bookings` aggregates upcoming vs past visits plus saved payment cards
+- `/profile` offers notification opt-in (push/email + SMS) persisted to Prisma and shortcuts into other portals
+- Bottom navigation for a mobile-first shell
 
-Scan the QR code with **Expo Go** on your device, or press `i` / `a` for the simulator.
+### Salon dashboard
+- Auth gated via role cookie (set on `/login`)
+- KPIs for slots filled today, Whim-driven revenue, and live listings
+- Daily calendar and slot list for the active salon (switch between demo salons)
+- Form to publish last-minute slots (service, time, discount, price)
+- Quick action form to update/cancel slot status
 
-### Server
+### Admin back office
+- Role gate identical to salon view
+- Forms to create salons, attach services, and register promo codes
+- Manual override block to approve/refund/adjust booking + payment states
+- Snapshot panels for bookings, services, and promo toggles
 
-```bash
-# From root — starts with hot reload via ts-node-dev
-yarn server
-```
+## Tooling & formatting
 
-The API will be available at `http://localhost:4000`.
+- `npm run lint` – ESLint (Next core web vitals profile)
+- `.prettierrc` ships opinionated formatting defaults
+- Prisma helpers: `npm run db:generate`, `npm run db:migrate`, `npm run db:seed`
 
-Health check: `GET http://localhost:4000/api/health`
+## Extending
 
-## Stripe Connect API
+- Real auth can slot into the role cookie utility located in `src/app/actions/auth.ts`
+- Replace email/payment mocks by wiring `createBookingAction` to real services
+- Swap SQLite for Postgres by changing `prisma/schema.prisma` + datasource URL
 
-All routes are prefixed with `/api/stripe`.
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/connect/onboard` | Create a salon Connect account + return onboarding URL |
-| `GET` | `/connect/account/:accountId` | Get salon's payout/charges status |
-| `POST` | `/payouts/transfer` | Transfer funds to a salon's Connect account |
-| `POST` | `/webhook` | Stripe webhook receiver (register in Stripe dashboard) |
-
-### Onboarding a salon (example)
-
-```bash
-curl -X POST http://localhost:4000/api/stripe/connect/onboard \
-  -H 'Content-Type: application/json' \
-  -d '{"email": "owner@salon.com", "salonName": "Glam Studio"}'
-```
-
-Returns `{ accountId, onboardingUrl }` — redirect the salon owner to `onboardingUrl` to complete KYC.
-
-### Webhook setup
-
-In the Stripe Dashboard → Developers → Webhooks, add an endpoint:
-- **URL**: `https://your-domain.com/api/stripe/webhook`
-- **Events**: `account.updated`, `transfer.created`
-
-Copy the signing secret into `STRIPE_WEBHOOK_SECRET` in your `.env`.
-
-For local testing use the [Stripe CLI](https://stripe.com/docs/stripe-cli):
-
-```bash
-stripe listen --forward-to localhost:4000/api/stripe/webhook
-```
-
-## Linting & formatting
-
-```bash
-yarn lint      # ESLint across all workspaces
-yarn format    # Prettier write
-```
-
-## Building for production
-
-```bash
-# Server
-yarn workspace @whim/server build   # outputs to apps/server/dist/
-
-# Mobile — use EAS Build
-yarn workspace @whim/mobile eas build --platform all
-```
+Have fun exploring Whim! 🎉

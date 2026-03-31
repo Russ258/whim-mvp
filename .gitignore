@@ -1,18 +1,40 @@
+# dependencies
 node_modules/
-dist/
-build/
-.expo/
-*.tsbuildinfo
+.pnp
+.pnp.*
 
-# Environment files — never commit real secrets
+# next.js
+.next/
+out/
+
+# builds & artifacts
+build/
+dist/
+.expo/
+
+# environment secrets
 .env
 .env.local
 .env.*.local
 
-# OS
+# misc
 .DS_Store
 Thumbs.db
+*.pem
 
-# Editor
+# editors
 .vscode/
 .idea/
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts

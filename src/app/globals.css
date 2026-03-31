@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+:root {
+  --charcoal: #1d1f24;
+  --surface: #f7f5f2;
+  --coral: #ff6b6b;
+  --mint: #2ec4b6;
+  --ink: #101218;
+  --text-muted: #7c7f8a;
+  --border-soft: rgba(255, 255, 255, 0.08);
+  --radius-card: 20px;
+}
+
+@theme inline {
+  --color-background: var(--surface);
+  --color-foreground: var(--ink);
+  --color-charcoal: var(--charcoal);
+  --color-surface: var(--surface);
+  --color-coral: var(--coral);
+  --color-mint: var(--mint);
+  --color-muted: var(--text-muted);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-playfair);
+}
+
+body {
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.1), transparent),
+    var(--charcoal);
+  color: var(--surface);
+  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  min-height: 100vh;
+}
+
+main {
+  min-height: 100vh;
+}
+
+.card-surface {
+  background: rgba(247, 245, 242, 0.9);
+  color: var(--ink);
+  border-radius: var(--radius-card);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.soft-card {
+  border-radius: var(--radius-card);
+  background: rgba(29, 31, 36, 0.8);
+  color: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+a {
+  color: inherit;
+}
