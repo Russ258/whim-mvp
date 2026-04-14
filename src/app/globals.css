@@ -1,36 +1,46 @@
 @import "tailwindcss";
 
 :root {
-  --charcoal: #2a211b;
-  --surface: #fefaf4;
-  --coral: #ff6b6b;
-  --mint: #2ec4b6;
-  --ink: #1c1814;
-  --text-muted: #8f8274;
-  --border-soft: rgba(42, 33, 27, 0.12);
+  --pink: #e8829a;
+  --pink-light: #f4b8c8;
+  --pink-muted: rgba(232, 130, 154, 0.12);
+  --charcoal: #3d2c35;
+  --ink: #2e2030;
+  --surface: #fdf0f5;
+  --surface-warm: #fdf6f9;
+  --muted: #a08c96;
+  --muted-light: #c4b0b8;
+  --border: rgba(61, 44, 53, 0.1);
+  --mint: #9dd4c8;
+  --accent: #c9b3d9;
   --radius-card: 20px;
 }
 
 @theme inline {
+  --color-pink: var(--pink);
+  --color-pink-light: var(--pink-light);
+  --color-pink-muted: var(--pink-muted);
+  --color-charcoal: var(--charcoal);
+  --color-ink: var(--ink);
+  --color-surface: var(--surface);
+  --color-surface-warm: var(--surface-warm);
+  --color-muted: var(--muted);
+  --color-muted-light: var(--muted-light);
+  --color-mint: var(--mint);
+  --color-accent: var(--accent);
   --color-background: var(--surface);
   --color-foreground: var(--charcoal);
-  --color-charcoal: var(--charcoal);
-  --color-surface: var(--surface);
-  --color-coral: var(--coral);
-  --color-mint: var(--mint);
-  --color-muted: var(--text-muted);
   --font-sans: var(--font-inter);
   --font-display: var(--font-playfair);
 }
 
 body {
   background:
-    radial-gradient(circle at 15% 5%, rgba(255, 214, 186, 0.55), transparent 55%),
-    radial-gradient(circle at 85% 0%, rgba(255, 240, 219, 0.65), transparent 45%),
+    radial-gradient(circle at 15% 10%, rgba(232, 130, 154, 0.18), transparent 50%),
+    radial-gradient(circle at 85% 5%, rgba(201, 179, 217, 0.15), transparent 45%),
     var(--surface);
   color: var(--charcoal);
-  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   min-height: 100vh;
 }
 
@@ -38,20 +48,76 @@ main {
   min-height: 100vh;
 }
 
-.card-surface {
+.card {
   background: rgba(255, 255, 255, 0.9);
-  color: var(--charcoal);
   border-radius: var(--radius-card);
-  box-shadow: 0 25px 45px rgba(42, 33, 27, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 4px 24px rgba(61, 44, 53, 0.08),
+    0 1px 4px rgba(61, 44, 53, 0.04);
+  backdrop-filter: blur(12px);
+}
+
+.btn-primary {
+  background: var(--pink);
+  color: #fff;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 14px rgba(232, 130, 154, 0.35);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #d96e87;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(232, 130, 154, 0.45);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-outline {
+  border: 1.5px solid var(--pink);
+  color: var(--pink);
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  background: var(--pink-muted);
+  transform: translateY(-1px);
 }
 
 .soft-card {
   border-radius: var(--radius-card);
   background: rgba(255, 255, 255, 0.82);
   color: var(--charcoal);
-  border: 1px solid rgba(42, 33, 27, 0.08);
-  box-shadow: 0 25px 50px rgba(42, 33, 27, 0.15);
+  border: 1px solid rgba(61, 44, 53, 0.08);
+  box-shadow: 0 8px 32px rgba(61, 44, 53, 0.1);
+}
+
+.card-surface {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--charcoal);
+  border-radius: var(--radius-card);
+  box-shadow: 0 25px 45px rgba(61, 44, 53, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 a {
