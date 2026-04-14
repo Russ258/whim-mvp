@@ -6,7 +6,7 @@ export default async function LoginPage() {
   const activeRole = getActiveRole();
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-6 px-4 py-10 text-surface">
+    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-6 px-4 py-10 text-charcoal">
       <header>
         <p className="text-xs uppercase tracking-[0.35em] text-muted">Role access</p>
         <h1 className="font-display text-4xl">Switch roles</h1>
@@ -19,7 +19,7 @@ export default async function LoginPage() {
         <form action={selectRole} className="soft-card rounded-3xl p-5">
           <input type="hidden" name="role" value="consumer" />
           <p className="text-xs uppercase tracking-[0.35em] text-muted">Guest</p>
-          <h3 className="text-2xl font-semibold text-white">Consumer</h3>
+          <h3 className="text-2xl font-semibold text-charcoal">Consumer</h3>
           <p className="text-sm text-muted">
             Default experience with landing page, booking flow, and saved cards.
           </p>
@@ -31,14 +31,14 @@ export default async function LoginPage() {
         <form action={selectRole} className="soft-card rounded-3xl p-5">
           <input type="hidden" name="role" value="salon" />
           <p className="text-xs uppercase tracking-[0.35em] text-muted">Partner</p>
-          <h3 className="text-2xl font-semibold text-white">Salon dashboard</h3>
+          <h3 className="text-2xl font-semibold text-charcoal">Salon dashboard</h3>
           <p className="text-sm text-muted">
-            Enter passcode <code className="text-white">{SALON_ROLE_PASSCODE}</code>
+            Enter passcode <code className="text-charcoal">{SALON_ROLE_PASSCODE}</code>
           </p>
           <input
             name="passcode"
             placeholder="passcode"
-            className="mt-3 w-full rounded-2xl border border-white/10 bg-transparent px-3 py-2"
+            className="mt-3 w-full rounded-2xl border border-charcoal/10 bg-white px-3 py-2"
           />
           <button className="mt-4 w-full rounded-2xl bg-mint/80 px-4 py-3 font-semibold text-charcoal">
             Unlock salon
@@ -48,14 +48,14 @@ export default async function LoginPage() {
         <form action={selectRole} className="soft-card rounded-3xl p-5 sm:col-span-2">
           <input type="hidden" name="role" value="admin" />
           <p className="text-xs uppercase tracking-[0.35em] text-muted">Ops</p>
-          <h3 className="text-2xl font-semibold text-white">Admin back office</h3>
+          <h3 className="text-2xl font-semibold text-charcoal">Admin back office</h3>
           <p className="text-sm text-muted">
-            Use passcode <code className="text-white">{ADMIN_ROLE_PASSCODE}</code>
+            Use passcode <code className="text-charcoal">{ADMIN_ROLE_PASSCODE}</code>
           </p>
           <input
             name="passcode"
             placeholder="Admin passcode"
-            className="mt-3 w-full rounded-2xl border border-white/10 bg-transparent px-3 py-2"
+            className="mt-3 w-full rounded-2xl border border-charcoal/10 bg-white px-3 py-2"
           />
           <button className="mt-4 w-full rounded-2xl bg-charcoal px-4 py-3 font-semibold text-white">
             Unlock admin
@@ -64,7 +64,7 @@ export default async function LoginPage() {
       </section>
 
       <form action={signOutRole}>
-        <button className="rounded-full border border-white/10 px-4 py-2 text-sm text-muted">
+        <button className="rounded-full border border-charcoal/20 px-4 py-2 text-sm text-muted">
           Clear role cookie
         </button>
       </form>

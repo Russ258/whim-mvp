@@ -3,6 +3,10 @@ import { addMinutes } from "date-fns";
 
 const prisma = new PrismaClient();
 
+function slot(hoursFromNow: number): Date {
+  return addMinutes(new Date(), hoursFromNow * 60);
+}
+
 async function main() {
   await prisma.booking.deleteMany();
   await prisma.dealSlot.deleteMany();
@@ -12,192 +16,171 @@ async function main() {
   await prisma.promoCode.deleteMany();
   await prisma.paymentMethod.deleteMany();
 
-  const now = new Date();
+  // ── Salons ────────────────────────────────────────────────────────────────
+  const salonData = [
+    {
+      name: "Strand Studio",
+      description: "Award-winning stylists in the heart of Newtown. Specialists in lived-in colour, cuts, and restorative treatments.",
+      city: "Sydney",
+      address: "312 King St, Newtown",
+      category: "HAIR",
+      rating: 4.9,
+      distanceKm: 0.3,
+      email: "hello@strandstudio.com.au",
+      phone: "+61411000001",
+      heroImage: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1200&q=80",
+    },
+    {
+      name: "The Cut Room",
+      description: "Relaxed, no-judgment salon on King St. Great for cuts, colour, and everything in between.",
+      city: "Sydney",
+      address: "189 King St, Newtown",
+      rating: 4.8,
+      distanceKm: 0.5,
+      heroImage: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=80",
+    },
+    {
+      name: "Velvet Hair Co.",
+      description: "Boutique salon in Enmore. Known for smoothing treatments, glossing, and bond therapy.",
+      city: "Sydney",
+      address: "67 Enmore Rd, Enmore",
+      rating: 4.8,
+      distanceKm: 0.8,
+      heroImage: "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=1200&q=80",
+    },
+    {
+      name: "Bloom & Shear",
+      description: "Women-first salon in Erskineville. Curl specialists and blow-dry bar.",
+      city: "Sydney",
+      address: "14 Australia St, Erskineville",
+      rating: 4.7,
+      distanceKm: 1.2,
+      heroImage: "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&w=1200&q=80",
+    },
+    {
+      name: "Raw & Co.",
+      description: "Marrickville's most-loved independent salon. Fashion colour and editorial finishes.",
+      city: "Sydney",
+      address: "242 Marrickville Rd, Marrickville",
+      rating: 4.6,
+      distanceKm: 1.9,
+      heroImage: "https://images.unsplash.com/photo-1595163153849-e5d9e9e6e5de?auto=format&fit=crop&w=1200&q=80",
+    },
+    {
+      name: "Polished & Pinned",
+      description: "Updo specialists and everyday styling in Glebe. Luxe results without the price tag.",
+      city: "Sydney",
+      address: "88 Glebe Point Rd, Glebe",
+      rating: 4.7,
+      distanceKm: 2.4,
+      heroImage: "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=1200&q=80",
+    },
+  ];
 
   const salons = await Promise.all(
-    [
-      {
-        name: "Luminous Locks",
-        description: "Award-winning stylists specialising in lived-in colour and glass finishes.",
-        city: "Sydney",
-        address: "14 Crown St, Surry Hills",
-        rating: 4.9,
-        distanceKm: 1.4,
-        heroImage:
-          "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1200&q=80",
-      },
-      {
-        name: "Mint & Shear",
-        description: "Fresh fades, scalp rituals, and restorative treatments in a calm oasis.",
-        city: "Sydney",
-        address: "88 Bayswater Rd, Darlinghurst",
-        rating: 4.7,
-        distanceKm: 2.1,
-        heroImage:
-          "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1200&q=80",
-      },
-      {
-        name: "Coral Comb Studio",
-        description: "Express blow-dries and editorial styling crafted for busy creatives.",
-        city: "Sydney",
-        address: "231 Harris St, Pyrmont",
-        rating: 4.8,
-        distanceKm: 3.3,
-        heroImage:
-          "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1200&q=80",
-      },
-    ].map((salon) =>
-      prisma.salon.create({
-        data: salon,
+    salonData.map((s) => prisma.salon.create({ data: s }))
+  );
+
+  // ── 3 service tiers per salon ─────────────────────────────────────────────
+  // QUICK  — trim, blowout, toner         ~45 min   $60–90
+  // FULL   — cut + colour, highlights     ~90 min   $100–160
+  // PREMIUM — balayage, treatment, perms  ~150 min  $180–280
+
+  const tierConfigs = [
+    { tier: "QUICK",   name: "Quick Appointment",   durationMin: 45,  basePrice: 75  },
+    { tier: "FULL",    name: "Full Appointment",    durationMin: 90,  basePrice: 130 },
+    { tier: "PREMIUM", name: "Premium Appointment", durationMin: 150, basePrice: 230 },
+  ]
+
+  // Small per-salon variation in base prices
+  const priceVariation = [0, -5, 10, -10, 5, -5]
+
+  const servicesBySalon: { [salonId: number]: { [tier: string]: Awaited<ReturnType<typeof prisma.service.create>> } } = {}
+
+  for (let i = 0; i < salons.length; i++) {
+    const salon = salons[i]
+    servicesBySalon[salon.id] = {}
+    for (const tc of tierConfigs) {
+      const svc = await prisma.service.create({
+        data: {
+          name: tc.name,
+          tier: tc.tier,
+          durationMin: tc.durationMin,
+          basePrice: tc.basePrice + priceVariation[i],
+          salonId: salon.id,
+        },
       })
-    )
-  );
+      servicesBySalon[salon.id][tc.tier] = svc
+    }
+  }
 
-  const services = await Promise.all(
-    [
-      {
-        name: "Express Blowdry",
-        durationMin: 45,
-        basePrice: 120,
-        salonId: salons[0].id,
-      },
-      {
-        name: "Restorative Treatment + Cut",
-        durationMin: 70,
-        basePrice: 210,
-        salonId: salons[0].id,
-      },
-      {
-        name: "Gloss Toner Refresh",
-        durationMin: 50,
-        basePrice: 180,
-        salonId: salons[1].id,
-      },
-      {
-        name: "Precision Fade",
-        durationMin: 40,
-        basePrice: 95,
-        salonId: salons[1].id,
-      },
-      {
-        name: "Editorial Waves",
-        durationMin: 60,
-        basePrice: 160,
-        salonId: salons[2].id,
-      },
-      {
-        name: "Hydrating Scalp Facial",
-        durationMin: 55,
-        basePrice: 190,
-        salonId: salons[2].id,
-      },
-    ].map((service) => prisma.service.create({ data: service }))
-  );
+  // ── Deal slots ────────────────────────────────────────────────────────────
+  // Mix of tiers and times spread over the next ~8 hours
+  const slotData = [
+    // Strand Studio
+    { salonIdx: 0, tier: "QUICK",   hoursFromNow: 0.5,  discount: 30 },
+    { salonIdx: 0, tier: "FULL",    hoursFromNow: 2.0,  discount: 25 },
+    { salonIdx: 0, tier: "PREMIUM", hoursFromNow: 4.5,  discount: 20 },
 
-  const slots = await Promise.all(
-    [
-      {
-        service: services[0],
-        salon: salons[0],
-        offsetMinutes: 30,
-        discountPercent: 25,
-      },
-      {
-        service: services[1],
-        salon: salons[0],
-        offsetMinutes: 120,
-        discountPercent: 35,
-      },
-      {
-        service: services[2],
-        salon: salons[1],
-        offsetMinutes: 75,
-        discountPercent: 20,
-      },
-      {
-        service: services[3],
-        salon: salons[1],
-        offsetMinutes: 180,
-        discountPercent: 30,
-      },
-      {
-        service: services[4],
-        salon: salons[2],
-        offsetMinutes: 240,
-        discountPercent: 18,
-      },
-      {
-        service: services[5],
-        salon: salons[2],
-        offsetMinutes: 320,
-        discountPercent: 40,
-      },
-    ].map(async ({ service, discountPercent, offsetMinutes }) => {
-      const startTime = addMinutes(now, offsetMinutes);
+    // The Cut Room
+    { salonIdx: 1, tier: "QUICK",   hoursFromNow: 1.0,  discount: 35 },
+    { salonIdx: 1, tier: "FULL",    hoursFromNow: 3.0,  discount: 20 },
+    { salonIdx: 1, tier: "QUICK",   hoursFromNow: 6.0,  discount: 30 },
+
+    // Velvet Hair Co.
+    { salonIdx: 2, tier: "PREMIUM", hoursFromNow: 0.75, discount: 25 },
+    { salonIdx: 2, tier: "QUICK",   hoursFromNow: 2.5,  discount: 40 },
+    { salonIdx: 2, tier: "FULL",    hoursFromNow: 5.0,  discount: 25 },
+
+    // Bloom & Shear
+    { salonIdx: 3, tier: "FULL",    hoursFromNow: 1.5,  discount: 30 },
+    { salonIdx: 3, tier: "QUICK",   hoursFromNow: 3.5,  discount: 35 },
+    { salonIdx: 3, tier: "PREMIUM", hoursFromNow: 7.0,  discount: 20 },
+
+    // Raw & Co.
+    { salonIdx: 4, tier: "QUICK",   hoursFromNow: 0.5,  discount: 40 },
+    { salonIdx: 4, tier: "FULL",    hoursFromNow: 2.0,  discount: 30 },
+    { salonIdx: 4, tier: "PREMIUM", hoursFromNow: 4.0,  discount: 20 },
+
+    // Polished & Pinned
+    { salonIdx: 5, tier: "QUICK",   hoursFromNow: 1.0,  discount: 30 },
+    { salonIdx: 5, tier: "FULL",    hoursFromNow: 3.0,  discount: 25 },
+    { salonIdx: 5, tier: "QUICK",   hoursFromNow: 6.5,  discount: 35 },
+  ];
+
+  await Promise.all(
+    slotData.map(({ salonIdx, tier, hoursFromNow, discount }) => {
+      const salon = salons[salonIdx]
+      const svc = servicesBySalon[salon.id][tier]
+      const startTime = slot(hoursFromNow)
       return prisma.dealSlot.create({
         data: {
-          salonId: service.salonId,
-          serviceId: service.id,
+          salonId: salon.id,
+          serviceId: svc.id,
           startTime,
-          endTime: addMinutes(startTime, service.durationMin),
-          discountPercent,
-          price: Math.round(service.basePrice * (1 - discountPercent / 100)),
+          endTime: addMinutes(startTime, svc.durationMin),
+          discountPercent: discount,
+          price: Math.round(svc.basePrice * (1 - discount / 100)),
         },
-        include: { salon: true, service: true },
-      });
+      })
     })
   );
 
-  await prisma.booking.create({
-    data: {
-      slotId: slots[0].id,
-      customerName: "Harper Bloom",
-      customerEmail: "harper@example.com",
-      status: "CONFIRMED",
-      paymentStatus: "PAID",
-    },
-  });
-
-  await prisma.booking.create({
-    data: {
-      slotId: slots[4].id,
-      customerName: "Elliot Shore",
-      customerEmail: "elliot@example.com",
-      status: "PENDING",
-      paymentStatus: "PENDING",
-    },
-  });
-
-  await prisma.notificationPreference.createMany({
-    data: [
-      { email: "harper@example.com", wantsPush: true, wantsSms: false },
-      { email: "elliot@example.com", wantsPush: false, wantsSms: true },
-    ],
-  });
-
   await prisma.promoCode.createMany({
     data: [
-      { code: "CORAL20", description: "20% off editorial styling", discountPercent: 20 },
-      { code: "MINTFRESH", description: "15% off scalp rituals", discountPercent: 15 },
+      { code: "WHIM20",    description: "20% off your first booking", discountPercent: 20 },
+      { code: "NEWTOWN15", description: "15% off at any Newtown salon", discountPercent: 15 },
+      { code: "REFER50",   description: "Referral reward — $50 credit", discountPercent: 50 },
     ],
   });
 
-  await prisma.paymentMethod.createMany({
-    data: [
-      { customerEmail: "harper@example.com", brand: "Visa", last4: "1882", expiryMonth: 9, expiryYear: 27, primary: true },
-      { customerEmail: "harper@example.com", brand: "Amex", last4: "4401", expiryMonth: 2, expiryYear: 28 },
-      { customerEmail: "elliot@example.com", brand: "Mastercard", last4: "9910", expiryMonth: 11, expiryYear: 26, primary: true },
-    ],
+  await prisma.notificationPreference.create({
+    data: { email: "demo@whim.app", wantsPush: true, wantsSms: false },
   });
 
-  console.log("Database seeded with salons, slots, bookings, and supporting data.");
+  console.log("✓ Seeded 6 salons · 3 tiers each · 18 slots.");
 }
 
 main()
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  .catch((e) => { console.error(e); process.exit(1); })
+  .finally(() => prisma.$disconnect());

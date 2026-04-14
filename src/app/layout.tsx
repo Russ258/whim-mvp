@@ -27,9 +27,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${playfair.variable} bg-charcoal text-surface`}
+      className={`${inter.variable} ${playfair.variable} bg-surface text-charcoal`}
     >
-      <body className="min-h-screen bg-charcoal text-surface antialiased">
+      <body className="min-h-screen bg-surface text-charcoal antialiased">
         {children}
       </body>
     </html>

@@ -12,7 +12,7 @@ export default async function SalonDashboard({
   const role = getActiveRole();
   if (role !== "salon") {
     return (
-      <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center gap-4 px-4 text-center text-surface">
+      <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center gap-4 px-4 text-center text-charcoal">
         <p className="text-sm uppercase tracking-[0.35em] text-muted">Restricted</p>
         <h1 className="font-display text-4xl">Salon dashboard locked</h1>
         <p className="text-muted">Use the salon passcode on the login page to proceed.</p>
@@ -26,14 +26,14 @@ export default async function SalonDashboard({
   const salons = await getSalons();
   const activeSalonId = Number(searchParams.salonId) || salons[0]?.id;
   if (!activeSalonId) {
-    return <p className="p-10 text-center text-white">No salons found. Create one in admin.</p>;
+    return <p className="p-10 text-center text-charcoal">No salons found. Create one in admin.</p>;
   }
 
   const dashboard = await getSalonDashboardPayload(activeSalonId);
   const salon = dashboard.salon;
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-6 px-4 py-8 text-surface">
+    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-6 px-4 py-8 text-charcoal">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.35em] text-muted">Salon partner</p>

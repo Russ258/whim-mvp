@@ -16,6 +16,9 @@ model Salon {
   rating      Float      @default(4.7)
   distanceKm  Float
   heroImage   String?
+  category    String     @default("HAIR")
+  email       String?
+  phone       String?
   services    Service[]
   slots       DealSlot[]
   createdAt   DateTime   @default(now())
@@ -24,6 +27,7 @@ model Salon {
 model Service {
   id          Int        @id @default(autoincrement())
   name        String
+  tier        String     @default("QUICK")
   durationMin Int
   basePrice   Int
   salon       Salon      @relation(fields: [salonId], references: [id])
@@ -55,7 +59,9 @@ model Booking {
   status        String   @default("CONFIRMED")
   paymentStatus String   @default("PAID")
   notes         String?
-  createdAt     DateTime @default(now())
+  voucherCode   String    @unique
+  redeemedAt    DateTime?
+  createdAt     DateTime  @default(now())
 }
 
 model NotificationPreference {

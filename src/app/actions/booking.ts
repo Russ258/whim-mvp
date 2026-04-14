@@ -2,6 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { sendBookingNotifications } from "@/lib/notifications";
+
+function generateVoucherCode(): string {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  const rand = Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
+  return `WHM-${rand}`
+}
 
 export async function createBookingAction(input: {
   slotId: number;
@@ -32,6 +39,7 @@ export async function createBookingAction(input: {
       notes: input.notes,
       status: "CONFIRMED",
       paymentStatus: "PAID",
+      voucherCode: generateVoucherCode(),
     },
     include: {
       slot: {
@@ -48,9 +56,21 @@ export async function createBookingAction(input: {
     data: { status: "BOOKED" },
   });
 
-  console.log(
-    `📧 [email-stub] Confirmation -> ${input.customerEmail} booked ${slot.service.name} @ ${slot.salon.name} for ${slot.startTime.toISOString()}`,
-  );
+  // Fire notifications — don't await so booking response isn't delayed
+  sendBookingNotifications({
+    customerName: input.customerName,
+    customerEmail: input.customerEmail,
+    notes: input.notes ?? null,
+    voucherCode: booking.voucherCode,
+    startTime: slot.startTime,
+    endTime: slot.endTime,
+    discountPercent: slot.discountPercent,
+    tier: slot.service.tier,
+    salonName: slot.salon.name,
+    salonAddress: slot.salon.address,
+    salonEmail: slot.salon.email ?? undefined,
+    salonPhone: slot.salon.phone ?? undefined,
+  }).catch((e) => console.error('[notifications] unexpected error:', e))
 
   revalidatePath("/");
   revalidatePath("/bookings");

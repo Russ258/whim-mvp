@@ -8,7 +8,7 @@ export default async function AdminPage() {
   const role = getActiveRole();
   if (role !== "admin") {
     return (
-      <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center gap-4 px-4 text-center text-surface">
+      <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center gap-4 px-4 text-center text-charcoal">
         <p className="text-sm uppercase tracking-[0.35em] text-muted">Restricted</p>
         <h1 className="font-display text-4xl">Admin tools locked</h1>
         <p className="text-muted">Use the admin passcode on the login page to proceed.</p>
@@ -22,7 +22,7 @@ export default async function AdminPage() {
   const { salons, services, bookings, promoCodes } = await getAdminSnapshot();
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 px-4 py-8 text-surface">
+    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 px-4 py-8 text-charcoal">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.35em] text-muted">Operations HQ</p>
