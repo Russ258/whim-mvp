@@ -11,10 +11,10 @@ async function main() {
   await prisma.booking.deleteMany();
   await prisma.dealSlot.deleteMany();
   await prisma.service.deleteMany();
-  await prisma.salon.deleteMany();
   await prisma.notificationPreference.deleteMany();
   await prisma.promoCode.deleteMany();
   await prisma.paymentMethod.deleteMany();
+  await prisma.salon.deleteMany();
 
   // ── Salons ────────────────────────────────────────────────────────────────
   const salonData = [
