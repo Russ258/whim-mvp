@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -13,6 +14,24 @@ export async function POST(req: NextRequest) {
     bookingSoftware?: string;
     notes?: string;
   };
+
+  // Save to database
+  try {
+    await prisma.salonApplication.create({
+      data: {
+        salonName: salonName ?? "",
+        contactName: contactName ?? "",
+        email: email ?? "",
+        phone: phone ?? "",
+        address: address ?? "",
+        chairs: chairs ?? null,
+        bookingSoftware: bookingSoftware ?? null,
+        notes: notes ?? null,
+      },
+    });
+  } catch (err) {
+    console.error("[salon-signup] DB error:", err);
+  }
 
   const apiKey = process.env.RESEND_API_KEY;
 

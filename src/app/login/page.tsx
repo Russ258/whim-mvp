@@ -3,7 +3,7 @@ import { getActiveRole } from "@/lib/auth";
 import { ADMIN_ROLE_PASSCODE, SALON_ROLE_PASSCODE } from "@/lib/constants";
 
 export default async function LoginPage() {
-  const activeRole = getActiveRole();
+  const activeRole = await getActiveRole();
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-6 px-4 py-10 text-charcoal">

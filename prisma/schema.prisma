@@ -9,20 +9,45 @@ datasource db {
 }
 
 model Salon {
-  id          Int        @id @default(autoincrement())
-  name        String
-  description String
-  city        String
-  address     String
-  rating      Float      @default(4.7)
-  distanceKm  Float
-  heroImage   String?
-  category    String     @default("HAIR")
-  email       String?
-  phone       String?
-  services    Service[]
-  slots       DealSlot[]
-  createdAt   DateTime   @default(now())
+  id            Int           @id @default(autoincrement())
+  name          String
+  description   String
+  city          String
+  address       String
+  rating        Float         @default(4.7)
+  distanceKm    Float
+  heroImage     String?
+  category      String        @default("HAIR")
+  email         String?
+  phone         String?
+  services      Service[]
+  slots         DealSlot[]
+  salonAccount  SalonAccount?
+  createdAt     DateTime      @default(now())
+}
+
+model SalonApplication {
+  id              Int      @id @default(autoincrement())
+  salonName       String
+  contactName     String
+  email           String
+  phone           String
+  address         String
+  chairs          String?
+  bookingSoftware String?
+  notes           String?
+  status          String   @default("PENDING")
+  createdAt       DateTime @default(now())
+}
+
+model SalonAccount {
+  id          Int       @id @default(autoincrement())
+  salonId     Int       @unique
+  salon       Salon     @relation(fields: [salonId], references: [id])
+  email       String    @unique
+  loginToken  String    @unique
+  tokenExpiry DateTime?
+  createdAt   DateTime  @default(now())
 }
 
 model Service {

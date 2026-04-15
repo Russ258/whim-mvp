@@ -21,7 +21,8 @@ export async function selectRole(formData: FormData) {
     return { ok: false, message: "Incorrect admin passcode" };
   }
 
-  cookies().set(ROLE_COOKIE, role, {
+  const cookieStore = await cookies();
+  cookieStore.set(ROLE_COOKIE, role, {
     path: "/",
     httpOnly: false,
     maxAge: 60 * 60 * 24,
@@ -34,7 +35,8 @@ export async function selectRole(formData: FormData) {
 }
 
 export async function signOutRole() {
-  cookies().delete(ROLE_COOKIE);
+  const cookieStore = await cookies();
+  cookieStore.delete(ROLE_COOKIE);
   revalidatePath("/");
   revalidatePath("/salon");
   revalidatePath("/admin");
