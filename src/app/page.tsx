@@ -1,129 +1,174 @@
 import Link from "next/link";
+import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
+
+const dealCards = [
+  { salon: "Strand Studio", discount: "30% off", time: "Today 2:00 pm", tier: "Full", area: "Newtown" },
+  { salon: "Blush & Co.", discount: "25% off", time: "Today 3:30 pm", tier: "Quick", area: "Surry Hills" },
+  { salon: "Atelier Noir", discount: "40% off", time: "Today 5:00 pm", tier: "Premium", area: "Paddington" },
+];
+
+const tierColors: Record<string, string> = {
+  Quick: "#9dd4c8",
+  Full: "#c9b3d9",
+  Premium: "#e8829a",
+};
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen" style={{ background: "var(--surface)", color: "var(--charcoal)" }}>
-      {/* Nav */}
-      <nav
-        className="sticky top-0 z-50 flex items-center justify-between px-6 py-4"
-        style={{
-          background: "rgba(253,240,245,0.95)",
-          backdropFilter: "blur(16px)",
-          borderBottom: "1px solid var(--border)",
-        }}
-      >
-        <Link href="/" className="font-display text-3xl font-bold" style={{ color: "var(--pink)", fontFamily: "var(--font-playfair)" }}>
-          Whim
-        </Link>
-        <div className="flex items-center gap-6">
-          <Link
-            href="/for-salons"
-            className="hidden text-sm font-medium sm:block"
-            style={{ color: "var(--muted)" }}
-          >
-            For Salons
-          </Link>
-          <Link
-            href="/salon/login"
-            className="hidden text-sm font-medium sm:block"
-            style={{ color: "var(--charcoal)" }}
-          >
-            Salon login
-          </Link>
-          <button
-            disabled
-            className="rounded-full px-4 py-2 text-sm font-semibold opacity-50 cursor-not-allowed"
-            style={{ background: "var(--pink)", color: "#fff" }}
-          >
-            Download app
-          </button>
-        </div>
-      </nav>
+      <Nav />
 
-      {/* Hero */}
+      {/* ─── Hero ─── */}
       <section
-        className="flex min-h-[100svh] flex-col items-center justify-center px-6 py-24 text-center"
-        style={{
-          background: "linear-gradient(160deg, #fce4ec 0%, #fdf0f5 45%, #ede7f6 100%)",
-        }}
+        className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center"
+        style={{ background: "var(--surface)" }}
       >
-        <p
-          className="mb-4 text-xs font-semibold uppercase tracking-[0.3em]"
-          style={{ color: "var(--pink)" }}
-        >
-          Sydney&apos;s last-minute beauty app
-        </p>
-        <h1
-          className="mx-auto mb-6 max-w-3xl text-5xl font-bold leading-tight sm:text-6xl lg:text-7xl"
-          style={{ fontFamily: "var(--font-playfair)", color: "var(--charcoal)" }}
-        >
-          Last-minute hair,
-          <br />
-          on your terms.
-        </h1>
-        <p
-          className="mx-auto mb-10 max-w-xl text-lg leading-relaxed"
-          style={{ color: "var(--muted)" }}
-        >
-          Whim connects you with Sydney&apos;s best salons offering same-day discounts on empty appointment slots.
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <button
-            disabled
-            className="rounded-full px-8 py-4 text-base font-semibold opacity-60 cursor-not-allowed"
-            style={{ background: "var(--pink)", color: "#fff", boxShadow: "0 4px 14px rgba(232,130,154,0.35)" }}
-          >
-            Download the App
-          </button>
-          <Link
-            href="/for-salons"
-            className="rounded-full border px-8 py-4 text-base font-semibold transition-all hover:opacity-80"
-            style={{ borderColor: "var(--pink)", color: "var(--pink)" }}
-          >
-            For Salons →
-          </Link>
+        {/* Animated gradient orbs */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div
+            className="hero-orb-1 absolute -left-32 -top-32 h-[600px] w-[600px] rounded-full"
+            style={{
+              background: "radial-gradient(circle, rgba(232,130,154,0.28) 0%, transparent 70%)",
+            }}
+          />
+          <div
+            className="hero-orb-2 absolute -right-32 top-20 h-[500px] w-[500px] rounded-full"
+            style={{
+              background: "radial-gradient(circle, rgba(201,179,217,0.25) 0%, transparent 70%)",
+            }}
+          />
+          <div
+            className="hero-orb-3 absolute bottom-0 left-1/3 h-[400px] w-[400px] rounded-full"
+            style={{
+              background: "radial-gradient(circle, rgba(157,212,200,0.2) 0%, transparent 70%)",
+            }}
+          />
         </div>
 
-        {/* Phone mockup */}
-        <div className="mt-16 flex justify-center">
+        <div className="relative z-10 flex flex-col items-center">
+          {/* Pill tag */}
           <div
-            className="relative flex flex-col items-center justify-center overflow-hidden"
+            className="mb-6 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-widest"
             style={{
-              width: 220,
-              height: 440,
-              borderRadius: 40,
-              background: "linear-gradient(160deg, #f9c0ce 0%, #e8829a 40%, #c9b3d9 100%)",
-              boxShadow: "0 32px 80px rgba(232,130,154,0.35), 0 0 0 6px rgba(255,255,255,0.5)",
-              border: "3px solid rgba(255,255,255,0.6)",
+              background: "rgba(232,130,154,0.12)",
+              color: "var(--pink)",
+              border: "1px solid rgba(232,130,154,0.25)",
             }}
           >
-            {/* Camera notch */}
-            <div
-              className="absolute top-5"
-              style={{ width: 80, height: 22, background: "rgba(61,44,53,0.15)", borderRadius: 20 }}
+            <span
+              className="inline-block h-1.5 w-1.5 animate-pulse rounded-full"
+              style={{ background: "var(--pink)" }}
             />
-            <div className="flex flex-col items-center gap-3 px-6 text-center">
+            Sydney · Hair · Same-day deals
+          </div>
+
+          {/* Heading */}
+          <h1
+            className="mx-auto mb-6 max-w-4xl text-6xl font-bold leading-[1.08] sm:text-7xl lg:text-8xl"
+            style={{
+              fontFamily: "var(--font-playfair)",
+              color: "var(--charcoal)",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            Great hair,
+            <br />
+            <span style={{ color: "var(--pink)" }}>on a whim.</span>
+          </h1>
+
+          {/* Subtext */}
+          <p
+            className="mx-auto mb-10 max-w-lg text-lg leading-relaxed"
+            style={{ color: "var(--muted)" }}
+          >
+            Sydney&apos;s best salons. Last-minute slots. Up to 40% off — today only.
+          </p>
+
+          {/* CTAs */}
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/how-it-works"
+              className="rounded-full px-8 py-4 text-base font-bold text-white transition-all hover:opacity-90"
+              style={{ background: "var(--pink)", boxShadow: "0 4px 18px rgba(232,130,154,0.4)" }}
+            >
+              See how it works
+            </Link>
+            <Link
+              href="/for-salons"
+              className="rounded-full border px-8 py-4 text-base font-semibold transition-all hover:opacity-80"
+              style={{ borderColor: "var(--pink)", color: "var(--pink)" }}
+            >
+              For salons →
+            </Link>
+          </div>
+
+          {/* Deal cards mockup */}
+          <div className="mt-16 flex flex-wrap justify-center gap-4">
+            {dealCards.map((card) => (
               <div
-                className="text-4xl font-bold"
-                style={{ fontFamily: "var(--font-playfair)", color: "#fff" }}
+                key={card.salon}
+                className="flex flex-col gap-3 rounded-2xl p-5 text-left"
+                style={{
+                  width: 220,
+                  background: "rgba(255,255,255,0.92)",
+                  border: "1px solid rgba(255,255,255,0.8)",
+                  boxShadow: "0 8px 32px rgba(61,44,53,0.1), 0 1px 4px rgba(61,44,53,0.06)",
+                  backdropFilter: "blur(12px)",
+                }}
               >
-                Whim
+                {/* Tier badge */}
+                <div className="flex items-center justify-between">
+                  <span
+                    className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-white"
+                    style={{ background: tierColors[card.tier] }}
+                  >
+                    {card.tier}
+                  </span>
+                  <span
+                    className="rounded-full px-2.5 py-0.5 text-[11px] font-bold"
+                    style={{ background: "rgba(232,130,154,0.12)", color: "var(--pink)" }}
+                  >
+                    {card.discount}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-sm font-bold" style={{ color: "var(--charcoal)" }}>
+                    {card.salon}
+                  </p>
+                  <p className="text-xs" style={{ color: "var(--muted)" }}>
+                    {card.area}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span style={{ fontSize: 13, color: "var(--muted)" }}>🕑</span>
+                  <span className="text-xs font-medium" style={{ color: "var(--charcoal)" }}>
+                    {card.time}
+                  </span>
+                </div>
+                <div
+                  className="mt-1 rounded-xl py-2 text-center text-xs font-semibold text-white"
+                  style={{ background: "var(--pink)" }}
+                >
+                  Book now
+                </div>
               </div>
-              <p className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.85)" }}>
-                Coming soon to
-              </p>
-              <div
-                className="rounded-full px-4 py-2 text-xs font-semibold"
-                style={{ background: "rgba(255,255,255,0.25)", color: "#fff", backdropFilter: "blur(8px)" }}
-              >
-                App Store &amp; Google Play
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* How it works */}
+      {/* ─── Social proof strip ─── */}
+      <div
+        className="overflow-hidden py-4 text-center text-sm font-semibold tracking-widest"
+        style={{ background: "var(--pink)", color: "#fff" }}
+      >
+        <span className="uppercase">
+          Launching in Newtown &nbsp;·&nbsp; Summer 2025 &nbsp;·&nbsp; Be first to know
+        </span>
+      </div>
+
+      {/* ─── How it works preview ─── */}
       <section className="px-6 py-24">
         <div className="mx-auto max-w-5xl">
           <p
@@ -133,27 +178,28 @@ export default function LandingPage() {
             Simple by design
           </p>
           <h2
-            className="mb-14 text-center text-4xl font-bold"
+            className="mb-14 text-center text-4xl font-bold sm:text-5xl"
             style={{ fontFamily: "var(--font-playfair)", color: "var(--charcoal)" }}
           >
             How it works
           </h2>
+
           <div className="grid gap-6 sm:grid-cols-3">
             {[
               {
                 step: "01",
-                title: "Browse last-minute slots",
-                desc: "Discover same-day openings from Sydney's top salons — all at a discount.",
+                title: "Browse same-day slots",
+                desc: "Discover last-minute openings from top Sydney salons — all at a discount, all expiring today.",
               },
               {
                 step: "02",
-                title: "Book instantly",
-                desc: "Reserve your slot in seconds. No card required, no hidden fees.",
+                title: "Book in seconds, no card needed",
+                desc: "Enter your name and email. Tap Confirm. Your slot is reserved in an instant — no credit card required.",
               },
               {
                 step: "03",
-                title: "Show your QR code",
-                desc: "Arrive at the salon, show your QR code, and enjoy your discount.",
+                title: "Show your QR code, enjoy the discount",
+                desc: "Arrive at the salon, show your Whim QR code, and enjoy your discount. Payment is at the salon, on the day.",
               },
             ].map(({ step, title, desc }) => (
               <div
@@ -176,61 +222,42 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* Why Whim */}
-      <section
-        className="px-6 py-20"
-        style={{ background: "var(--surface-warm)" }}
-      >
-        <div className="mx-auto max-w-4xl">
-          <p
-            className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.3em]"
-            style={{ color: "var(--pink)" }}
-          >
-            Why Whim
-          </p>
-          <h2
-            className="mb-12 text-center text-4xl font-bold"
-            style={{ fontFamily: "var(--font-playfair)", color: "var(--charcoal)" }}
-          >
-            Made for spontaneous you
-          </h2>
-          <div className="grid gap-5 sm:grid-cols-3">
-            {[
-              { icon: "✦", label: "Up to 40% off", sub: "Real discounts on premium salons" },
-              { icon: "⏰", label: "Same-day only", sub: "No advance planning needed" },
-              { icon: "◎", label: "No subscription", sub: "Free forever — just book and go" },
-            ].map(({ icon, label, sub }) => (
-              <div
-                key={label}
-                className="flex flex-col items-center gap-3 rounded-3xl p-8 text-center"
-                style={{
-                  background: "rgba(255,255,255,0.85)",
-                  border: "1px solid rgba(232,130,154,0.15)",
-                  boxShadow: "0 4px 20px rgba(61,44,53,0.06)",
-                }}
-              >
-                <span
-                  className="flex h-14 w-14 items-center justify-center rounded-full text-2xl"
-                  style={{ background: "var(--pink-muted)", color: "var(--pink)" }}
-                >
-                  {icon}
-                </span>
-                <p className="text-lg font-bold" style={{ color: "var(--charcoal)" }}>
-                  {label}
-                </p>
-                <p className="text-sm" style={{ color: "var(--muted)" }}>
-                  {sub}
-                </p>
-              </div>
-            ))}
+          <div className="mt-10 text-center">
+            <Link
+              href="/how-it-works"
+              className="text-base font-semibold transition-opacity hover:opacity-70"
+              style={{ color: "var(--pink)" }}
+            >
+              See full details →
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Salon CTA banner */}
+      {/* ─── On a whim section ─── */}
+      <section
+        className="px-6 py-28 text-center"
+        style={{
+          background: "linear-gradient(135deg, #f3e8ff 0%, #fce4ec 50%, #e0f2f1 100%)",
+        }}
+      >
+        <div className="mx-auto max-w-3xl">
+          <p
+            className="mx-auto mb-6 text-4xl font-bold italic leading-snug sm:text-5xl"
+            style={{ fontFamily: "var(--font-playfair)", color: "var(--charcoal)" }}
+          >
+            &ldquo;Because sometimes the best decisions are made on a whim.&rdquo;
+          </p>
+          <p className="mx-auto max-w-xl text-lg leading-relaxed" style={{ color: "var(--muted)" }}>
+            Not every great hair day needs three weeks of planning. Whim is for the spontaneous,
+            the last-minute, the&nbsp;<em>why not today?</em> — real discounts on real appointments,
+            whenever you decide.
+          </p>
+        </div>
+      </section>
+
+      {/* ─── For salons banner ─── */}
       <section
         className="px-6 py-24 text-center"
         style={{
@@ -247,8 +274,8 @@ export default function LandingPage() {
           >
             Are you a salon?
           </h2>
-          <p className="mb-10 text-lg text-white/85">
-            Fill your empty slots and reach new clients — no setup fee, no subscription.
+          <p className="mb-10 text-lg leading-relaxed" style={{ color: "rgba(255,255,255,0.88)" }}>
+            Fill your quiet hours with paying clients. No setup fee, no subscription.
           </p>
           <Link
             href="/for-salons"
@@ -259,41 +286,30 @@ export default function LandingPage() {
               boxShadow: "0 8px 30px rgba(61,44,53,0.15)",
             }}
           >
-            Join as a salon →
+            Join as a salon partner →
           </Link>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer
-        className="px-6 py-10"
-        style={{ borderTop: "1px solid var(--border)", background: "var(--surface)" }}
-      >
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4">
-          <div>
-            <span
-              className="text-xl font-bold"
-              style={{ fontFamily: "var(--font-playfair)", color: "var(--pink)" }}
-            >
-              Whim
-            </span>
-            <span className="ml-3 text-sm" style={{ color: "var(--muted)" }}>
-              © 2025
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center gap-6 text-sm" style={{ color: "var(--muted)" }}>
-            <a href="mailto:hello@whim.au" className="hover:underline">
-              hello@whim.au
-            </a>
-            <Link href="/for-salons" className="hover:underline">
-              For Salons
-            </Link>
-            <Link href="/redeem" className="hover:underline">
-              Redeem
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
+
+      <style>{`
+        @keyframes orb-float-1 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(30px, -20px) scale(1.05); }
+        }
+        @keyframes orb-float-2 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(-25px, 20px) scale(1.08); }
+        }
+        @keyframes orb-float-3 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(15px, -30px) scale(1.04); }
+        }
+        .hero-orb-1 { animation: orb-float-1 10s ease-in-out infinite; }
+        .hero-orb-2 { animation: orb-float-2 13s ease-in-out infinite; }
+        .hero-orb-3 { animation: orb-float-3 9s ease-in-out infinite; }
+      `}</style>
     </div>
   );
 }

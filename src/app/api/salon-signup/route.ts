@@ -3,12 +3,14 @@ import { Resend } from "resend";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { salonName, contactName, email, phone, address, notes } = body as {
+  const { salonName, contactName, email, phone, address, chairs, bookingSoftware, notes } = body as {
     salonName?: string;
     contactName?: string;
     email?: string;
     phone?: string;
     address?: string;
+    chairs?: string;
+    bookingSoftware?: string;
     notes?: string;
   };
 
@@ -21,6 +23,8 @@ export async function POST(req: NextRequest) {
       email,
       phone,
       address,
+      chairs,
+      bookingSoftware,
       notes,
     });
     return NextResponse.json({ ok: true });
@@ -65,9 +69,19 @@ export async function POST(req: NextRequest) {
           <td style="padding:10px 0;font-size:14px;color:#3d2c35;font-weight:600;">${phone ?? "—"}</td>
         </tr>
         <tr>
-          <td style="padding:10px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;vertical-align:top;">Address</td>
+          <td style="padding:10px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;vertical-align:top;">Suburb / address</td>
           <td style="padding:10px 0;font-size:14px;color:#3d2c35;font-weight:600;">${address ?? "—"}</td>
         </tr>
+        ${chairs ? `
+        <tr>
+          <td style="padding:10px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;vertical-align:top;">Chairs</td>
+          <td style="padding:10px 0;font-size:14px;color:#3d2c35;font-weight:600;">${chairs}</td>
+        </tr>` : ""}
+        ${bookingSoftware ? `
+        <tr>
+          <td style="padding:10px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;vertical-align:top;">Booking software</td>
+          <td style="padding:10px 0;font-size:14px;color:#3d2c35;font-weight:600;">${bookingSoftware}</td>
+        </tr>` : ""}
         ${notes ? `
         <tr>
           <td style="padding:10px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;vertical-align:top;">Notes</td>
