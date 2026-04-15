@@ -141,7 +141,7 @@ export default function LandingPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span style={{ fontSize: 13, color: "var(--muted)" }}>🕑</span>
+                  <span style={{ fontSize: 13, color: "var(--muted)" }}></span>
                   <span className="text-xs font-medium" style={{ color: "var(--charcoal)" }}>
                     {card.time}
                   </span>

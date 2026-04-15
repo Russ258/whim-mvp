@@ -9,7 +9,7 @@ import Footer from "@/components/Footer";
 const customerSteps = [
   {
     number: "01",
-    icon: "🔍",
+    icon: "",
     title: "Browse today's deals",
     bullets: [
       "Open Whim, see all available same-day slots from top Sydney salons",
@@ -19,7 +19,7 @@ const customerSteps = [
   },
   {
     number: "02",
-    icon: "📅",
+    icon: "",
     title: "Pick your slot",
     bullets: [
       "Tap any deal to see the salon details and available time",
@@ -29,7 +29,7 @@ const customerSteps = [
   },
   {
     number: "03",
-    icon: "⚡",
+    icon: "",
     title: "Book instantly",
     bullets: [
       "Enter your name and email — that's it. No credit card required.",
@@ -39,7 +39,7 @@ const customerSteps = [
   },
   {
     number: "04",
-    icon: "🎫",
+    icon: "",
     title: "Get your voucher",
     bullets: [
       "Instantly receive a unique QR voucher code (e.g. WHM-4K9XZ)",
@@ -49,7 +49,7 @@ const customerSteps = [
   },
   {
     number: "05",
-    icon: "✂️",
+    icon: "",
     title: "Show up & enjoy",
     bullets: [
       "Arrive at the salon, open your Whim voucher",
@@ -84,7 +84,7 @@ const customerFAQs = [
 const salonSteps = [
   {
     number: "01",
-    icon: "🤝",
+    icon: "",
     title: "Sign up as a partner",
     bullets: [
       "Fill in your salon details on our partner page — takes 2 minutes",
@@ -94,7 +94,7 @@ const salonSteps = [
   },
   {
     number: "02",
-    icon: "🗓️",
+    icon: "",
     title: "Post your quiet slots",
     bullets: [
       "When you have a gap in your calendar, log into your dashboard",
@@ -105,7 +105,7 @@ const salonSteps = [
   },
   {
     number: "03",
-    icon: "📱",
+    icon: "",
     title: "Customer books instantly",
     bullets: [
       "A nearby customer sees your slot and books in seconds",
@@ -115,7 +115,7 @@ const salonSteps = [
   },
   {
     number: "04",
-    icon: "📲",
+    icon: "",
     title: "Redeem the voucher",
     bullets: [
       "Customer arrives and shows their Whim QR code",
@@ -126,7 +126,7 @@ const salonSteps = [
   },
   {
     number: "05",
-    icon: "📊",
+    icon: "",
     title: "We handle the rest",
     bullets: [
       "Whim invoices you monthly for a small platform fee per redeemed booking",

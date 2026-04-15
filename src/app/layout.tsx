@@ -14,9 +14,13 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Whim | Last-minute salon deals",
-  description:
-    "Whim surfaces same-day salon openings with delightful booking flows for guests, stylists, and admins.",
+  title: "Whim | Last-minute hair deals · Sydney",
+  description: "Same-day hair salon slots in Sydney at up to 40% off. Browse, book instantly, show your QR code. No credit card required.",
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({

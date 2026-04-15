@@ -260,7 +260,7 @@ async function sendSalonSms(params: {
   }
 
   const body = [
-    `🌸 New Whim booking!`,
+    `New Whim booking!`,
     `${params.customerName} · ${tierShort[params.tier] ?? 'Appt'} · ${formatTime(params.startTime)}`,
     `${params.discountPercent}% off · Voucher: ${params.voucherCode}`,
     `Redeem: whim.au/redeem`,
