@@ -25,6 +25,7 @@ model Salon {
   salonAccount        SalonAccount?
   services            Service[]
   availabilityWindows AvailabilityWindow[]
+  reviews             Review[]
 }
 
 model SalonApplication {
@@ -105,6 +106,7 @@ model Booking {
   redeemedAt         DateTime?
   createdAt     DateTime  @default(now())
   slot          DealSlot  @relation(fields: [slotId], references: [id])
+  review        Review?
 }
 
 model NotificationPreference {
@@ -140,4 +142,17 @@ model WaitlistEntry {
   promoCode   String   @unique
   earlyAccess Boolean  @default(true)
   createdAt   DateTime @default(now())
+}
+
+model Review {
+  id              Int      @id @default(autoincrement())
+  bookingId       Int      @unique
+  salonId         Int
+  customerEmail   String
+  overallRating   Int      // 1-5
+  valueRating     Int      // 1-5
+  repeatRating    Int      // 1-5
+  createdAt       DateTime @default(now())
+  booking         Booking  @relation(fields: [bookingId], references: [id])
+  salon           Salon    @relation(fields: [salonId], references: [id])
 }

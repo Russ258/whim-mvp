@@ -291,6 +291,83 @@ async function sendSalonSms(params: {
   })
 }
 
+/** Review request email — sent immediately after redemption */
+export async function sendReviewRequestEmail(params: {
+  customerEmail: string
+  customerName: string
+  salonName: string
+  voucherCode: string
+}) {
+  const resend = getResend()
+  if (!resend) {
+    console.log('[email-stub] No RESEND_API_KEY — skipping review email')
+    return
+  }
+
+  const appUrl = getAppUrl()
+  const baseUrl = `${appUrl}/review?code=${encodeURIComponent(params.voucherCode)}`
+
+  function starLink(rating: number) {
+    return `${baseUrl}&q1=${rating}`
+  }
+
+  await resend.emails.send({
+    from: `Whim <${getFromEmail()}>`,
+    to: params.customerEmail,
+    subject: `How was your appointment at ${params.salonName}?`,
+    html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#fdf0f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <div style="max-width:480px;margin:32px auto;background:#fff;border-radius:20px;overflow:hidden;border:1px solid rgba(232,130,154,0.2);">
+
+    <div style="background:linear-gradient(135deg,#fce4ec,#fdf0f5);padding:28px 28px 20px;text-align:center;">
+      <div style="font-size:32px;font-weight:800;color:#e8829a;margin-bottom:6px;">Whim</div>
+      <div style="font-size:18px;font-weight:700;color:#3d2c35;">How was your appointment?</div>
+    </div>
+
+    <div style="padding:28px;text-align:center;">
+      <p style="font-size:15px;color:#3d2c35;margin:0 0 6px;">
+        Hi ${params.customerName},
+      </p>
+      <p style="font-size:14px;color:#a08c96;margin:0 0 28px;line-height:1.6;">
+        Hope you loved your time at <strong style="color:#3d2c35;">${params.salonName}</strong>.
+        Tap a star to leave a quick rating — takes about 15 seconds, no writing required.
+      </p>
+
+      <!-- Star rating row -->
+      <div style="margin-bottom:28px;">
+        <p style="font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.8px;margin:0 0 14px;">How was your overall experience?</p>
+        <div style="display:inline-flex;gap:8px;">
+          ${[1,2,3,4,5].map((n) => `
+          <a href="${starLink(n)}" style="text-decoration:none;font-size:40px;line-height:1;color:${n <= 3 ? '#e8829a' : '#e8829a'};">
+            ${'★'}
+          </a>`).join('')}
+        </div>
+        <p style="font-size:11px;color:#c4b0b8;margin:10px 0 0;">1 = poor &nbsp;·&nbsp; 5 = excellent</p>
+      </div>
+
+      <a href="${baseUrl}&q1=5" style="display:inline-block;background:#e8829a;color:#fff;border-radius:100px;padding:14px 36px;font-size:15px;font-weight:700;text-decoration:none;margin-bottom:16px;">
+        Leave a quick review →
+      </a>
+
+      <p style="font-size:12px;color:#c4b0b8;margin:0;">
+        Takes about 15 seconds. No account needed.
+      </p>
+    </div>
+
+    <div style="background:#fdf6f9;padding:14px 28px;text-align:center;border-top:1px solid rgba(232,130,154,0.12);">
+      <div style="font-size:11px;color:#c4b0b8;">Whim · Sydney · <a href="${appUrl}" style="color:#e8829a;text-decoration:none;">whim.au</a></div>
+    </div>
+
+  </div>
+</body>
+</html>
+    `,
+  })
+}
+
 // ── Public API ────────────────────────────────────────────────────────────────
 
 export interface BookingNotificationParams {

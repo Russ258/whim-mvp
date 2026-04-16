@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { sendReviewRequestEmail } from '@/lib/notifications'
 
 // GET /api/redeem?code=WHM-XXXXXX — look up a voucher
 export async function GET(req: NextRequest) {
@@ -53,6 +54,7 @@ export async function POST(req: NextRequest) {
 
   const booking = await prisma.booking.findUnique({
     where: { voucherCode: code.toUpperCase().trim() },
+    include: { slot: { include: { salon: true } } },
   })
 
   if (!booking) {
@@ -70,6 +72,14 @@ export async function POST(req: NextRequest) {
     where: { id: booking.id },
     data: { redeemedAt: new Date(), status: 'REDEEMED' },
   })
+
+  // Fire review request email — don't await so redemption isn't delayed
+  sendReviewRequestEmail({
+    customerEmail: booking.customerEmail,
+    customerName: booking.customerName,
+    salonName: booking.slot.salon.name,
+    voucherCode: booking.voucherCode,
+  }).catch((e) => console.error('[review-email]', e))
 
   return NextResponse.json({ ok: true, redeemedAt: updated.redeemedAt })
 }
