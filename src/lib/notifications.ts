@@ -51,6 +51,8 @@ async function sendCustomerConfirmationEmail(params: {
   startTime: Date
   endTime: Date
   discountPercent: number
+  promoDiscountPct?: number
+  appliedPromoCode?: string
   serviceName: string
   voucherCode: string
   notes: string | null
@@ -111,9 +113,22 @@ async function sendCustomerConfirmationEmail(params: {
             <td style="padding:8px 0;font-size:14px;color:#3d2c35;font-weight:600;">${params.serviceName}</td>
           </tr>
           <tr>
-            <td style="padding:8px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;">Discount</td>
-            <td style="padding:8px 0;font-size:18px;color:#e8829a;font-weight:800;">${params.discountPercent}% off</td>
+            <td style="padding:8px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;">Slot discount</td>
+            <td style="padding:8px 0;font-size:14px;color:#e8829a;font-weight:700;">${params.discountPercent}% off</td>
           </tr>
+          ${params.promoDiscountPct ? `
+          <tr>
+            <td style="padding:8px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;">Promo (${params.appliedPromoCode})</td>
+            <td style="padding:8px 0;font-size:14px;color:#e8829a;font-weight:700;">+ ${params.promoDiscountPct}% off</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;">Total saving</td>
+            <td style="padding:8px 0;font-size:20px;color:#e8829a;font-weight:800;">${params.discountPercent + params.promoDiscountPct}% off 🎉</td>
+          </tr>` : `
+          <tr>
+            <td style="padding:8px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;">Total saving</td>
+            <td style="padding:8px 0;font-size:20px;color:#e8829a;font-weight:800;">${params.discountPercent}% off</td>
+          </tr>`}
           ${params.notes ? `
           <tr>
             <td style="padding:8px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;">Your notes</td>
@@ -291,6 +306,8 @@ export interface BookingNotificationParams {
   customerEmail: string
   notes: string | null
   voucherCode: string
+  promoDiscountPct?: number
+  appliedPromoCode?: string
   // Salon
   salonName: string
   salonAddress: string
@@ -309,6 +326,8 @@ export async function sendBookingNotifications(params: BookingNotificationParams
       startTime: params.startTime,
       endTime: params.endTime,
       discountPercent: params.discountPercent,
+      promoDiscountPct: params.promoDiscountPct,
+      appliedPromoCode: params.appliedPromoCode,
       serviceName: params.serviceName,
       voucherCode: params.voucherCode,
       notes: params.notes,

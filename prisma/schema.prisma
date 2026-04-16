@@ -99,8 +99,10 @@ model Booking {
   status        String    @default("CONFIRMED")
   paymentStatus String    @default("PAID")
   notes         String?
-  voucherCode   String    @unique
-  redeemedAt    DateTime?
+  voucherCode        String    @unique
+  appliedPromoCode   String?
+  promoDiscountPct   Int?
+  redeemedAt         DateTime?
   createdAt     DateTime  @default(now())
   slot          DealSlot  @relation(fields: [slotId], references: [id])
 }

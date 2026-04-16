@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
       notes?: string
       cardBrand?: string
       cardLast4?: string
+      promoCode?: string
     }
 
     if (!body.slotId || !body.customerName || !body.customerEmail) {

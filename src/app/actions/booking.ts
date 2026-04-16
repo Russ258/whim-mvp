@@ -17,6 +17,7 @@ export async function createBookingAction(input: {
   notes?: string;
   cardBrand?: string;
   cardLast4?: string;
+  promoCode?: string;
 }) {
   const slot = await prisma.dealSlot.findUnique({
     where: { id: input.slotId },
@@ -31,6 +32,19 @@ export async function createBookingAction(input: {
     return { ok: false, message: "Slot already booked" };
   }
 
+  // Validate promo code if provided
+  let promoDiscountPct: number | null = null
+  let appliedPromoCode: string | null = null
+  if (input.promoCode) {
+    const promo = await prisma.promoCode.findUnique({
+      where: { code: input.promoCode.toUpperCase().trim() },
+    })
+    if (promo && promo.active) {
+      appliedPromoCode = promo.code
+      promoDiscountPct = promo.discountPercent
+    }
+  }
+
   const booking = await prisma.booking.create({
     data: {
       slotId: slot.id,
@@ -40,6 +54,8 @@ export async function createBookingAction(input: {
       status: "CONFIRMED",
       paymentStatus: "PAID",
       voucherCode: generateVoucherCode(),
+      appliedPromoCode,
+      promoDiscountPct,
     },
     include: {
       slot: {
@@ -66,6 +82,8 @@ export async function createBookingAction(input: {
     startTime: slot.startTime,
     endTime: slot.endTime,
     discountPercent: slot.discountPercent,
+    promoDiscountPct: promoDiscountPct ?? undefined,
+    appliedPromoCode: appliedPromoCode ?? undefined,
     serviceName: slot.service.name,
     tier: slot.service.tier,
     salonName: slot.salon.name,
