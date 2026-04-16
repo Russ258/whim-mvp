@@ -20,7 +20,7 @@ export default async function LandingPage() {
   const waitlistCount = await prisma.waitlistEntry.count();
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--surface)", color: "var(--charcoal)" }}>
+    <div className="page-enter min-h-screen" style={{ background: "var(--surface)", color: "var(--charcoal)" }}>
       <Nav />
 
       {/* ─── Hero ─── */}

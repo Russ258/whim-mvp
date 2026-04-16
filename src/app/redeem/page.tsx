@@ -182,7 +182,7 @@ export default function RedeemPage() {
         )}
 
         <p style={styles.footer}>
-          Whim · Salon Portal · For support contact hello@whim.app
+          Whim · Salon Portal · For support contact hello@whim.au
         </p>
       </div>
     </div>

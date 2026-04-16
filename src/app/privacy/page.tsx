@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen" style={{ background: "var(--surface)", color: "var(--charcoal)" }}>
+    <div className="page-enter min-h-screen" style={{ background: "var(--surface)", color: "var(--charcoal)" }}>
       <Nav />
 
       <main className="mx-auto max-w-3xl px-6 py-20">

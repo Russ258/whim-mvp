@@ -7,32 +7,32 @@ import Footer from "@/components/Footer";
 
 const benefits = [
   {
-    icon: "",
+    icon: "✦",
     title: "You control everything",
     desc: "Set your own discount, choose which slots to offer, and post only when you want. Nothing is ever automatic.",
   },
   {
-    icon: "",
+    icon: "✓",
     title: "Real bookings, not leads",
     desc: "Customers show up with a voucher. No time-wasters, no cold inquiries — just confirmed appointments.",
   },
   {
-    icon: "◎",
+    icon: "$",
     title: "No subscription",
     desc: "Free to join. We charge a flat $10 per redeemed booking — only when a customer walks through your door.",
   },
   {
-    icon: "",
+    icon: "◎",
     title: "Simple redemption",
     desc: "Open whim.au/redeem on any device, enter the code, tap confirm. 10 seconds. No app, no hardware.",
   },
   {
-    icon: "",
+    icon: "↗",
     title: "Reach new clients",
     desc: "Whim brings in people who've never been to your salon — and they discover you because of a great experience.",
   },
   {
-    icon: "",
+    icon: "⚡",
     title: "No integration needed",
     desc: "Whim works alongside your existing booking system. No software changes, no IT required.",
   },
@@ -118,7 +118,7 @@ export default function ForSalonsPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--surface)", color: "var(--charcoal)" }}>
+    <div className="page-enter min-h-screen" style={{ background: "var(--surface)", color: "var(--charcoal)" }}>
       <Nav />
 
       {/* ─── Hero ─── */}
@@ -309,7 +309,7 @@ export default function ForSalonsPage() {
                   Strand Studio
                 </p>
                 <p className="text-xs" style={{ color: "var(--muted)" }}>
-                  Newtown — Whim partner (placeholder)
+                  Sydney — Whim partner
                 </p>
               </div>
             </div>
