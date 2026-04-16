@@ -82,9 +82,21 @@ function SalonLoginInner() {
       >
         Salon login
       </h1>
-      <p className="mb-6 text-sm" style={{ color: "var(--muted)" }}>
+      <p className="mb-4 text-sm" style={{ color: "var(--muted)" }}>
         Enter your salon email and we&apos;ll send you a login link.
       </p>
+      <div
+        className="mb-5 rounded-2xl px-4 py-3 text-sm"
+        style={{ background: "rgba(232,130,154,0.06)", border: "1px solid rgba(232,130,154,0.12)" }}
+      >
+        <p style={{ color: "var(--charcoal)" }}>
+          <span className="font-semibold">Not approved yet?</span>{" "}
+          <span style={{ color: "var(--muted)" }}>
+            Your login link is emailed automatically once your application is approved.
+            You don&apos;t need to do anything here — just wait for that email.
+          </span>
+        </p>
+      </div>
 
       {/* Token error state */}
       {tokenError && (

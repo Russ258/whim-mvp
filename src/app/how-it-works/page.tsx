@@ -129,8 +129,8 @@ const salonSteps = [
     icon: "",
     title: "We handle the rest",
     bullets: [
-      "Whim invoices you monthly for a small platform fee per redeemed booking",
-      "No upfront costs, no subscription — you only pay when you get a booking",
+      "Whim charges a flat $10 per redeemed booking — invoiced monthly",
+      "No upfront costs, no subscription — you only pay when you get a customer",
       "Track all your Whim bookings and revenue in your dashboard",
     ],
   },
@@ -140,7 +140,7 @@ const salonSteps = [
 const salonFAQs = [
   {
     q: "How much does it cost?",
-    a: "No upfront cost. We charge a small platform fee only on redeemed bookings — you only pay when you actually get a customer through the door.",
+    a: "No upfront cost. We charge a flat $10 per redeemed booking — you only pay when a customer actually walks through your door.",
   },
   {
     q: "Do I need special equipment?",

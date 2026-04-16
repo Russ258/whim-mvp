@@ -19,7 +19,7 @@ const benefits = [
   {
     icon: "◎",
     title: "No subscription",
-    desc: "Free to join, free to post slots. We only charge a small platform fee on redeemed bookings.",
+    desc: "Free to join. We charge a flat $10 per redeemed booking — only when a customer walks through your door.",
   },
   {
     icon: "",

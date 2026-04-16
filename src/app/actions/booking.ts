@@ -58,6 +58,7 @@ export async function createBookingAction(input: {
 
   // Fire notifications — don't await so booking response isn't delayed
   sendBookingNotifications({
+    slotId: slot.id,
     customerName: input.customerName,
     customerEmail: input.customerEmail,
     notes: input.notes ?? null,
@@ -65,6 +66,7 @@ export async function createBookingAction(input: {
     startTime: slot.startTime,
     endTime: slot.endTime,
     discountPercent: slot.discountPercent,
+    serviceName: slot.service.name,
     tier: slot.service.tier,
     salonName: slot.salon.name,
     salonAddress: slot.salon.address,

@@ -9,21 +9,22 @@ datasource db {
 }
 
 model Salon {
-  id           Int           @id @default(autoincrement())
-  name         String
-  description  String
-  city         String
-  address      String
-  rating       Float         @default(4.7)
-  distanceKm   Float
-  heroImage    String?
-  category     String        @default("HAIR")
-  email        String?
-  phone        String?
-  createdAt    DateTime      @default(now())
-  slots        DealSlot[]
-  salonAccount SalonAccount?
-  services     Service[]
+  id                  Int                  @id @default(autoincrement())
+  name                String
+  description         String
+  city                String
+  address             String
+  rating              Float                @default(4.7)
+  distanceKm          Float
+  heroImage           String?
+  category            String               @default("HAIR")
+  email               String?
+  phone               String?
+  createdAt           DateTime             @default(now())
+  slots               DealSlot[]
+  salonAccount        SalonAccount?
+  services            Service[]
+  availabilityWindows AvailabilityWindow[]
 }
 
 model SalonApplication {
@@ -51,14 +52,28 @@ model SalonAccount {
 }
 
 model Service {
-  id          Int        @id @default(autoincrement())
-  name        String
-  tier        String     @default("QUICK")
-  durationMin Int
-  basePrice   Int
-  salonId     Int
-  slots       DealSlot[]
-  salon       Salon      @relation(fields: [salonId], references: [id])
+  id                  Int                  @id @default(autoincrement())
+  name                String
+  tier                String               @default("QUICK")
+  durationMin         Int
+  basePrice           Int
+  salonId             Int
+  slots               DealSlot[]
+  salon               Salon                @relation(fields: [salonId], references: [id])
+  availabilityWindows AvailabilityWindow[]
+}
+
+model AvailabilityWindow {
+  id         Int      @id @default(autoincrement())
+  salonId    Int
+  serviceId  Int
+  dayOfWeek  Int      // 0=Sun 1=Mon 2=Tue 3=Wed 4=Thu 5=Fri 6=Sat
+  startHour  Int      // 0-23
+  endHour    Int      // 0-23 exclusive
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  salon      Salon    @relation(fields: [salonId], references: [id])
+  service    Service  @relation(fields: [serviceId], references: [id])
 }
 
 model DealSlot {

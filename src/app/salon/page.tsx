@@ -7,6 +7,8 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import SlotForm from "./SlotForm";
 import ServiceManager from "./ServiceManager";
+import AvailabilityManager from "./AvailabilityManager";
+import { prisma } from "@/lib/prisma";
 
 
 const TIER_META: Record<string, { color: string; bg: string; label: string }> = {
@@ -43,6 +45,12 @@ export default async function SalonDashboard({
   const { salon, todaysBookings, liveSlots, monthlyRedeemed } = data;
   const params = await searchParams;
   const activeTab = params.tab ?? "dashboard";
+
+  const availabilityWindows = await prisma.availabilityWindow.findMany({
+    where: { salonId },
+    include: { service: true },
+    orderBy: [{ dayOfWeek: "asc" }, { startHour: "asc" }],
+  });
 
   return (
     <main
@@ -102,6 +110,7 @@ export default async function SalonDashboard({
       <nav className="flex gap-2">
         {[
           { id: "dashboard", label: "Dashboard" },
+          { id: "availability", label: "Availability", badge: availabilityWindows.length === 0 && salon.services.length > 0 ? "!" : undefined },
           { id: "services", label: "Services", badge: salon.services.length === 0 ? "!" : undefined },
         ].map((tab) => (
           <Link
@@ -127,6 +136,15 @@ export default async function SalonDashboard({
           </Link>
         ))}
       </nav>
+
+      {/* ── AVAILABILITY TAB ── */}
+      {activeTab === "availability" && (
+        <AvailabilityManager
+          salonId={salonId}
+          services={salon.services}
+          initialWindows={availabilityWindows}
+        />
+      )}
 
       {/* ── SERVICES TAB ── */}
       {activeTab === "services" && (
@@ -327,7 +345,7 @@ export default async function SalonDashboard({
       >
         <p className="text-xs" style={{ color: "var(--muted)" }}>
           <span className="font-semibold" style={{ color: "var(--charcoal)" }}>Whim platform fee:</span>{" "}
-          Quick $5 · Full $10 · Premium $15 per redeemed booking. Invoiced monthly.
+          $10 flat fee per redeemed booking. Invoiced monthly. No setup fee, no subscription.
         </p>
       </div>
 

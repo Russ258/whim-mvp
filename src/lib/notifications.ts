@@ -13,12 +13,7 @@
 
 import { Resend } from 'resend'
 import twilio from 'twilio'
-
-const TIER_LABEL: Record<string, string> = {
-  QUICK:   'Quick appointment (up to 45 min)',
-  FULL:    'Full appointment (up to 90 min)',
-  PREMIUM: 'Premium appointment (up to 2.5 hrs)',
-}
+import { makeCancelUrl } from '@/app/api/slots/cancel/route'
 
 function formatTime(date: Date): string {
   return date.toLocaleTimeString('en-AU', {
@@ -56,7 +51,7 @@ async function sendCustomerConfirmationEmail(params: {
   startTime: Date
   endTime: Date
   discountPercent: number
-  tier: string
+  serviceName: string
   voucherCode: string
   notes: string | null
 }) {
@@ -67,7 +62,6 @@ async function sendCustomerConfirmationEmail(params: {
   }
 
   const redeemUrl = `${getAppUrl()}/redeem`
-  const tierLabel = TIER_LABEL[params.tier] ?? 'Hair appointment'
 
   await resend.emails.send({
     from: `Whim <${getFromEmail()}>`,
@@ -113,8 +107,8 @@ async function sendCustomerConfirmationEmail(params: {
             <td style="padding:8px 0;font-size:14px;color:#3d2c35;font-weight:600;">${formatTime(params.startTime)} – ${formatTime(params.endTime)}</td>
           </tr>
           <tr>
-            <td style="padding:8px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;">Appointment</td>
-            <td style="padding:8px 0;font-size:14px;color:#3d2c35;font-weight:600;">${tierLabel}</td>
+            <td style="padding:8px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;">Service</td>
+            <td style="padding:8px 0;font-size:14px;color:#3d2c35;font-weight:600;">${params.serviceName}</td>
           </tr>
           <tr>
             <td style="padding:8px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;">Discount</td>
@@ -155,13 +149,14 @@ async function sendCustomerConfirmationEmail(params: {
 
 /** Email to salon notifying them of a new booking */
 async function sendSalonNotificationEmail(params: {
+  slotId: number
   salonEmail: string
   salonName: string
   customerName: string
   startTime: Date
   endTime: Date
   discountPercent: number
-  tier: string
+  serviceName: string
   voucherCode: string
   notes: string | null
 }) {
@@ -172,7 +167,7 @@ async function sendSalonNotificationEmail(params: {
   }
 
   const redeemUrl = `${getAppUrl()}/redeem`
-  const tierLabel = TIER_LABEL[params.tier] ?? 'Hair appointment'
+  const cancelUrl = makeCancelUrl(params.slotId)
 
   await resend.emails.send({
     from: `Whim <${getFromEmail()}>`,
@@ -197,11 +192,11 @@ async function sendSalonNotificationEmail(params: {
           <td style="padding:8px 0;font-size:14px;color:#3d2c35;font-weight:600;">${formatDate(params.startTime)}</td>
         </tr>
         <tr>
-          <td style="padding:8px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;">Appointment</td>
-          <td style="padding:8px 0;font-size:14px;color:#3d2c35;font-weight:600;">${tierLabel}</td>
+          <td style="padding:8px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;">Service</td>
+          <td style="padding:8px 0;font-size:14px;color:#3d2c35;font-weight:600;">${params.serviceName}</td>
         </tr>
         <tr>
-          <td style="padding:8px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;">Whim discount</td>
+          <td style="padding:8px 0;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:0.5px;">Discount</td>
           <td style="padding:8px 0;font-size:18px;color:#e8829a;font-weight:800;">${params.discountPercent}% off</td>
         </tr>
         ${params.notes ? `
@@ -215,12 +210,20 @@ async function sendSalonNotificationEmail(params: {
         </tr>
       </table>
 
-      <a href="${redeemUrl}" style="display:block;background:#3d2c35;color:#fff;text-align:center;padding:16px;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none;margin-top:20px;">
-        Open Whim Redemption Page
+      <a href="${redeemUrl}" style="display:block;background:#e8829a;color:#fff;text-align:center;padding:16px;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none;margin-top:20px;">
+        Open redemption page →
       </a>
 
-      <p style="font-size:12px;color:#a08c96;text-align:center;margin-top:16px;">
-        When the customer arrives, enter their voucher code at ${redeemUrl} to confirm and apply their discount.
+      <div style="margin-top:16px;padding:16px;background:#fdf6f9;border-radius:12px;border:1px solid rgba(232,130,154,0.12);">
+        <p style="font-size:13px;color:#3d2c35;font-weight:600;margin:0 0 6px;">Got a booking from elsewhere for this time?</p>
+        <p style="font-size:12px;color:#a08c96;margin:0 0 12px;">Click below to cancel this Whim slot so no one else books it.</p>
+        <a href="${cancelUrl}" style="display:inline-block;background:#fff;color:#c0392b;border:1px solid rgba(192,57,43,0.3);padding:10px 20px;border-radius:100px;font-size:13px;font-weight:600;text-decoration:none;">
+          Cancel this slot
+        </a>
+      </div>
+
+      <p style="font-size:11px;color:#c4b0b8;text-align:center;margin-top:16px;">
+        Whim charges a flat $10 fee per redeemed booking, invoiced monthly.
       </p>
     </div>
 
@@ -276,16 +279,18 @@ async function sendSalonSms(params: {
 // ── Public API ────────────────────────────────────────────────────────────────
 
 export interface BookingNotificationParams {
+  // Slot
+  slotId: number
+  startTime: Date
+  endTime: Date
+  discountPercent: number
+  serviceName: string
+  tier: string
   // Customer
   customerName: string
   customerEmail: string
   notes: string | null
   voucherCode: string
-  // Slot
-  startTime: Date
-  endTime: Date
-  discountPercent: number
-  tier: string
   // Salon
   salonName: string
   salonAddress: string
@@ -304,20 +309,21 @@ export async function sendBookingNotifications(params: BookingNotificationParams
       startTime: params.startTime,
       endTime: params.endTime,
       discountPercent: params.discountPercent,
-      tier: params.tier,
+      serviceName: params.serviceName,
       voucherCode: params.voucherCode,
       notes: params.notes,
     }),
     // Salon email if we have their address
     params.salonEmail
       ? sendSalonNotificationEmail({
+          slotId: params.slotId,
           salonEmail: params.salonEmail,
           salonName: params.salonName,
           customerName: params.customerName,
           startTime: params.startTime,
           endTime: params.endTime,
           discountPercent: params.discountPercent,
-          tier: params.tier,
+          serviceName: params.serviceName,
           voucherCode: params.voucherCode,
           notes: params.notes,
         })
