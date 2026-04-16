@@ -31,33 +31,6 @@ export async function approveSalonApplication(applicationId: number) {
     },
   });
 
-  // Create 3 default services (QUICK / FULL / PREMIUM)
-  await prisma.service.createMany({
-    data: [
-      {
-        salonId: salon.id,
-        name: "Quick",
-        tier: "QUICK",
-        durationMin: 45,
-        basePrice: 60,
-      },
-      {
-        salonId: salon.id,
-        name: "Full",
-        tier: "FULL",
-        durationMin: 90,
-        basePrice: 120,
-      },
-      {
-        salonId: salon.id,
-        name: "Premium",
-        tier: "PREMIUM",
-        durationMin: 150,
-        basePrice: 200,
-      },
-    ],
-  });
-
   // Generate login token, expiring in 7 days
   const loginToken = generateToken();
   const tokenExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
@@ -106,8 +79,13 @@ export async function approveSalonApplication(applicationId: number) {
         Great news — <strong>${application.salonName}</strong> has been approved as a Whim salon partner!
         Your dashboard is ready and waiting.
       </p>
+      <p style="color:#a08c96;line-height:1.6;margin:0 0 16px;">
+        Click the button below to access your salon dashboard. Your first step is to add your services
+        (e.g. "Women's Cut & Blowdry · $85 · 60 min") — this only takes a minute and lets customers
+        see exactly what they're booking.
+      </p>
       <p style="color:#a08c96;line-height:1.6;margin:0 0 24px;">
-        Click the button below to access your salon dashboard and start posting last-minute slots.
+        Once your services are set up, you can start posting last-minute slots in seconds.
       </p>
       <div style="text-align:center;margin:28px 0;">
         <a href="${loginUrl}"

@@ -2,35 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-const TIERS = [
-  {
-    value: "QUICK",
-    label: "Quick",
-    desc: "Trim, blowout, toner",
-    duration: "Up to 45 min",
-    color: "#5a9e95",
-    bg: "rgba(90,158,149,0.1)",
-  },
-  {
-    value: "FULL",
-    label: "Full",
-    desc: "Cut + colour, highlights",
-    duration: "Up to 90 min",
-    color: "#e8829a",
-    bg: "rgba(232,130,154,0.1)",
-  },
-  {
-    value: "PREMIUM",
-    label: "Premium",
-    desc: "Balayage, treatments",
-    duration: "Up to 2.5 hrs",
-    color: "#9b7fc8",
-    bg: "rgba(155,127,200,0.1)",
-  },
-] as const;
-
-type Service = { id: number; name: string };
+type Service = {
+  id: number;
+  name: string;
+  basePrice: number;
+  durationMin: number;
+  tier: string;
+};
 
 function localDatetimeDefault() {
   const now = new Date();
@@ -47,24 +27,57 @@ export default function SlotForm({
 }) {
   const router = useRouter();
   const [discount, setDiscount] = useState(25);
+  const [selectedServiceId, setSelectedServiceId] = useState<number | null>(
+    services[0]?.id ?? null
+  );
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
 
+  const selectedService = services.find((s) => s.id === selectedServiceId);
+  const savedAmount = selectedService
+    ? Math.round((selectedService.basePrice * discount) / 100)
+    : null;
+
+  if (services.length === 0) {
+    return (
+      <div
+        className="flex flex-col items-center gap-4 rounded-3xl p-8 text-center"
+        style={{
+          background: "rgba(255,255,255,0.95)",
+          border: "1.5px dashed rgba(232,130,154,0.3)",
+        }}
+      >
+        <p className="text-base font-semibold" style={{ color: "var(--charcoal)" }}>
+          Set up your services first
+        </p>
+        <p className="text-sm" style={{ color: "var(--muted)" }}>
+          Add your service menu before posting slots — customers need to know what they're booking.
+        </p>
+        <Link
+          href="/salon?tab=services"
+          className="rounded-full px-6 py-2.5 text-sm font-bold text-white transition-all hover:opacity-90"
+          style={{ background: "var(--pink)", boxShadow: "0 4px 14px rgba(232,130,154,0.3)" }}
+        >
+          Add services →
+        </Link>
+      </div>
+    );
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!selectedServiceId) return;
     setSubmitting(true);
-    const data = new FormData(e.currentTarget);
 
     await fetch("/api/salon/slots", {
       method: "POST",
-      body: JSON.stringify({
-        salonId: Number(data.get("salonId")),
-        serviceId: Number(data.get("serviceId")),
-        startTime: data.get("startTime"),
-        discountPercent: Number(data.get("discountPercent")),
-        tier: data.get("tier"),
-      }),
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        salonId,
+        serviceId: selectedServiceId,
+        startTime: (e.currentTarget.elements.namedItem("startTime") as HTMLInputElement).value,
+        discountPercent: discount,
+      }),
     });
 
     setSubmitting(false);
@@ -85,57 +98,14 @@ export default function SlotForm({
         boxShadow: "0 8px 40px rgba(61,44,53,0.08)",
       }}
     >
-      <input type="hidden" name="salonId" value={salonId} />
-
-      {/* Tier selector */}
-      <fieldset>
-        <legend
-          className="mb-3 text-xs font-semibold uppercase tracking-[0.3em]"
-          style={{ color: "var(--muted)" }}
-        >
-          Appointment tier
-        </legend>
-        <div className="grid grid-cols-3 gap-2">
-          {TIERS.map(({ value, label, desc, duration, color, bg }) => (
-            <label
-              key={value}
-              className="flex cursor-pointer flex-col gap-1.5 rounded-2xl border p-3 transition-all has-[:checked]:border-pink-300"
-              style={{ borderColor: "rgba(232,130,154,0.2)" }}
-            >
-              <input
-                type="radio"
-                name="tier"
-                value={value}
-                defaultChecked={value === "FULL"}
-                className="sr-only"
-              />
-              <span
-                className="self-start rounded-full px-2 py-0.5 text-xs font-bold"
-                style={{ background: bg, color }}
-              >
-                {label}
-              </span>
-              <span className="text-xs font-medium" style={{ color: "var(--charcoal)" }}>
-                {desc}
-              </span>
-              <span className="text-xs" style={{ color: "var(--muted)" }}>
-                {duration}
-              </span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-
-      {/* Service */}
+      {/* Service picker */}
       <label className="flex flex-col gap-1.5">
-        <span
-          className="text-xs font-semibold uppercase tracking-[0.3em]"
-          style={{ color: "var(--muted)" }}
-        >
+        <span className="text-xs font-semibold uppercase tracking-[0.3em]" style={{ color: "var(--muted)" }}>
           Service
         </span>
         <select
-          name="serviceId"
+          value={selectedServiceId ?? ""}
+          onChange={(e) => setSelectedServiceId(Number(e.target.value))}
           className="w-full rounded-2xl border px-4 py-3 text-sm"
           style={{
             borderColor: "rgba(232,130,154,0.2)",
@@ -145,7 +115,7 @@ export default function SlotForm({
         >
           {services.map((s) => (
             <option key={s.id} value={s.id}>
-              {s.name}
+              {s.name} · ${s.basePrice} · {s.durationMin}min
             </option>
           ))}
         </select>
@@ -153,10 +123,7 @@ export default function SlotForm({
 
       {/* Start time */}
       <label className="flex flex-col gap-1.5">
-        <span
-          className="text-xs font-semibold uppercase tracking-[0.3em]"
-          style={{ color: "var(--muted)" }}
-        >
+        <span className="text-xs font-semibold uppercase tracking-[0.3em]" style={{ color: "var(--muted)" }}>
           Start time
         </span>
         <input
@@ -172,25 +139,28 @@ export default function SlotForm({
         />
       </label>
 
-      {/* Discount % — live update */}
+      {/* Discount slider */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between">
-          <span
-            className="text-xs font-semibold uppercase tracking-[0.3em]"
-            style={{ color: "var(--muted)" }}
-          >
+          <span className="text-xs font-semibold uppercase tracking-[0.3em]" style={{ color: "var(--muted)" }}>
             Discount
           </span>
-          <span
-            className="rounded-full px-3 py-1 text-sm font-bold"
-            style={{ background: "rgba(232,130,154,0.1)", color: "var(--pink)" }}
-          >
-            {discount}% off
-          </span>
+          <div className="flex items-center gap-2">
+            <span
+              className="rounded-full px-3 py-1 text-sm font-bold"
+              style={{ background: "rgba(232,130,154,0.1)", color: "var(--pink)" }}
+            >
+              {discount}% off
+            </span>
+            {savedAmount !== null && (
+              <span className="text-sm font-medium" style={{ color: "var(--muted)" }}>
+                customer saves ${savedAmount}
+              </span>
+            )}
+          </div>
         </div>
         <input
           type="range"
-          name="discountPercent"
           min={10}
           max={50}
           step={5}
@@ -205,11 +175,30 @@ export default function SlotForm({
         </div>
       </div>
 
+      {/* Price preview */}
+      {selectedService && (
+        <div
+          className="rounded-2xl px-4 py-3 text-sm"
+          style={{ background: "rgba(232,130,154,0.06)", border: "1px solid rgba(232,130,154,0.12)" }}
+        >
+          <p style={{ color: "var(--charcoal)" }}>
+            Customer pays{" "}
+            <strong style={{ color: "var(--pink)" }}>
+              ${selectedService.basePrice - savedAmount!}
+            </strong>
+            {" "}instead of ${selectedService.basePrice}
+          </p>
+        </div>
+      )}
+
       <button
         type="submit"
-        disabled={submitting || done}
-        className="mt-2 w-full rounded-full py-4 text-base font-bold text-white transition-all hover:opacity-90 disabled:opacity-70"
-        style={{ background: done ? "#5a9e95" : "var(--pink)", boxShadow: "0 4px 14px rgba(232,130,154,0.35)" }}
+        disabled={submitting || done || !selectedServiceId}
+        className="mt-1 w-full rounded-full py-4 text-base font-bold text-white transition-all hover:opacity-90 disabled:opacity-70"
+        style={{
+          background: done ? "#5a9e95" : "var(--pink)",
+          boxShadow: "0 4px 14px rgba(232,130,154,0.35)",
+        }}
       >
         {done ? "Slot published!" : submitting ? "Publishing…" : "Publish slot"}
       </button>

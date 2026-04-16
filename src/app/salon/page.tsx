@@ -6,6 +6,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import SlotForm from "./SlotForm";
+import ServiceManager from "./ServiceManager";
 
 
 const TIER_META: Record<string, { color: string; bg: string; label: string }> = {
@@ -22,7 +23,11 @@ async function signOutSalon() {
   redirect("/salon/login");
 }
 
-export default async function SalonDashboard() {
+export default async function SalonDashboard({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
   const salonId = await getActiveSalonId();
 
   if (!salonId) {
@@ -36,6 +41,8 @@ export default async function SalonDashboard() {
   }
 
   const { salon, todaysBookings, liveSlots, monthlyRedeemed } = data;
+  const params = await searchParams;
+  const activeTab = params.tab ?? "dashboard";
 
   return (
     <main
@@ -90,6 +97,44 @@ export default async function SalonDashboard() {
           </form>
         </div>
       </header>
+
+      {/* Tab nav */}
+      <nav className="flex gap-2">
+        {[
+          { id: "dashboard", label: "Dashboard" },
+          { id: "services", label: "Services", badge: salon.services.length === 0 ? "!" : undefined },
+        ].map((tab) => (
+          <Link
+            key={tab.id}
+            href={`/salon?tab=${tab.id}`}
+            className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all"
+            style={{
+              background: activeTab === tab.id ? "var(--pink)" : "rgba(255,255,255,0.9)",
+              color: activeTab === tab.id ? "#fff" : "var(--charcoal)",
+              border: activeTab === tab.id ? "none" : "1px solid rgba(232,130,154,0.2)",
+              boxShadow: activeTab === tab.id ? "0 4px 14px rgba(232,130,154,0.3)" : "none",
+            }}
+          >
+            {tab.label}
+            {tab.badge && (
+              <span
+                className="flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold"
+                style={{ background: "rgba(255,200,60,0.2)", color: "#c47f00" }}
+              >
+                {tab.badge}
+              </span>
+            )}
+          </Link>
+        ))}
+      </nav>
+
+      {/* ── SERVICES TAB ── */}
+      {activeTab === "services" && (
+        <ServiceManager salonId={salonId} initialServices={salon.services} />
+      )}
+
+      {/* ── DASHBOARD TAB ── */}
+      {activeTab === "dashboard" && <>
 
       {/* Stats row */}
       <section className="grid gap-4 sm:grid-cols-3">
@@ -285,6 +330,8 @@ export default async function SalonDashboard() {
           Quick $5 · Full $10 · Premium $15 per redeemed booking. Invoiced monthly.
         </p>
       </div>
+
+      </>}
     </main>
   );
 }
