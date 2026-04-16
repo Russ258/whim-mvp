@@ -286,7 +286,7 @@ async function sendSalonSms(params: {
 
   await client.messages.create({
     body,
-    from: process.env.TWILIO_FROM_NUMBER!,
+    from: 'Whim',
     to: params.salonPhone,
   })
 }
