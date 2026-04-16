@@ -46,7 +46,7 @@ export default function Footer() {
           className="flex flex-wrap items-center justify-between gap-2 pt-6 text-xs"
           style={{ borderTop: "1px solid var(--border)", color: "var(--muted-light)" }}
         >
-          <span>© 2025 Whim. Sydney, Australia.</span>
+          <span>© 2026 Whim. Sydney, Australia.</span>
           <span>Made with love for spontaneous people.</span>
         </div>
       </div>

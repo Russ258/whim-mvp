@@ -86,7 +86,9 @@ export default async function LandingPage() {
             className="mx-auto mb-10 max-w-lg text-lg leading-relaxed"
             style={{ color: "var(--muted)" }}
           >
-            Sydney&apos;s best salons. Last-minute slots. Up to 40% off — launching soon.
+            Sydney&apos;s best salons. Last-minute slots. Up to 40% off.
+            <br />
+            <span style={{ color: "var(--pink)", fontWeight: 600 }}>Coming to you in the winter of 2026.</span>
           </p>
 
           {/* Waitlist form */}
