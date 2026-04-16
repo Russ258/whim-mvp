@@ -47,7 +47,11 @@ export default function Footer() {
           style={{ borderTop: "1px solid var(--border)", color: "var(--muted-light)" }}
         >
           <span>© 2026 Whim. Sydney, Australia.</span>
-          <span>Made with love for spontaneous people.</span>
+          <div className="flex items-center gap-4">
+            <Link href="/terms" className="transition-opacity hover:opacity-70 hover:underline">Terms</Link>
+            <Link href="/privacy" className="transition-opacity hover:opacity-70 hover:underline">Privacy</Link>
+            <span>Made with love for spontaneous people.</span>
+          </div>
         </div>
       </div>
     </footer>
