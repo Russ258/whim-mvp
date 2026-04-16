@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
 import { randomBytes } from "crypto";
 
-const EARLY_ACCESS_LIMIT = 500;
+const EARLY_ACCESS_LIMIT = 150;
 
 function generatePromoCode(): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";

@@ -357,7 +357,7 @@ export default function HowItWorksPage() {
                 >
                   Ready to book?
                 </h3>
-                <p className="mb-6 text-white/80">Download the app when it launches — launching Summer 2025.</p>
+                <p className="mb-6 text-white/80">Download the app when it launches — launching Summer 2026.</p>
                 <button
                   disabled
                   className="cursor-not-allowed rounded-full bg-white px-8 py-3 text-base font-bold opacity-70"
