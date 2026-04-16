@@ -24,8 +24,8 @@ export async function selectRole(formData: FormData) {
   const cookieStore = await cookies();
   cookieStore.set(ROLE_COOKIE, role, {
     path: "/",
-    httpOnly: false,
-    maxAge: 60 * 60 * 24,
+    httpOnly: true,
+    maxAge: 60 * 60 * 24 * 7,
   });
 
   revalidatePath("/");

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import WaitlistForm from "./WaitlistForm";
+import { prisma } from "@/lib/prisma";
 
 const dealCards = [
   { salon: "Strand Studio", discount: "30% off", time: "Today 2:00 pm", tier: "Full", area: "Newtown" },
@@ -14,7 +16,9 @@ const tierColors: Record<string, string> = {
   Premium: "#e8829a",
 };
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const waitlistCount = await prisma.waitlistEntry.count();
+
   return (
     <div className="min-h-screen" style={{ background: "var(--surface)", color: "var(--charcoal)" }}>
       <Nav />
@@ -82,22 +86,25 @@ export default function LandingPage() {
             className="mx-auto mb-10 max-w-lg text-lg leading-relaxed"
             style={{ color: "var(--muted)" }}
           >
-            Sydney&apos;s best salons. Last-minute slots. Up to 40% off — today only.
+            Sydney&apos;s best salons. Last-minute slots. Up to 40% off — launching soon.
           </p>
 
-          {/* CTAs */}
-          <div className="flex flex-wrap items-center justify-center gap-4">
+          {/* Waitlist form */}
+          <WaitlistForm initialCount={waitlistCount} />
+
+          {/* Nav links */}
+          <div className="mt-6 flex items-center justify-center gap-6">
             <Link
               href="/how-it-works"
-              className="rounded-full px-8 py-4 text-base font-bold text-white transition-all hover:opacity-90"
-              style={{ background: "var(--pink)", boxShadow: "0 4px 18px rgba(232,130,154,0.4)" }}
+              className="text-sm font-semibold transition-opacity hover:opacity-70"
+              style={{ color: "var(--muted)" }}
             >
-              See how it works
+              How it works →
             </Link>
             <Link
               href="/for-salons"
-              className="rounded-full border px-8 py-4 text-base font-semibold transition-all hover:opacity-80"
-              style={{ borderColor: "var(--pink)", color: "var(--pink)" }}
+              className="text-sm font-semibold transition-opacity hover:opacity-70"
+              style={{ color: "var(--muted)" }}
             >
               For salons →
             </Link>
@@ -164,7 +171,7 @@ export default function LandingPage() {
         style={{ background: "var(--pink)", color: "#fff" }}
       >
         <span className="uppercase">
-          Launching in Newtown &nbsp;·&nbsp; Summer 2025 &nbsp;·&nbsp; Be first to know
+          Launching in Sydney &nbsp;·&nbsp; Early members get 10% off forever &nbsp;·&nbsp; No card needed
         </span>
       </div>
 

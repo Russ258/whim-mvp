@@ -355,7 +355,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   redeemBtn: {
     width: '100%',
-    backgroundColor: charcoal,
+    backgroundColor: pink,
     color: '#fff',
     border: 'none',
     borderRadius: 14,
@@ -363,6 +363,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 16,
     fontWeight: 700,
     cursor: 'pointer',
+    boxShadow: '0 4px 14px rgba(232,130,154,0.35)',
   },
   footer: {
     textAlign: 'center',

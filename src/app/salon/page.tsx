@@ -1,40 +1,12 @@
-import { createSlotAction, updateSlotStatusAction } from "@/app/actions/slots";
+import { updateSlotStatusAction } from "@/app/actions/slots";
 import { getActiveSalonId } from "@/lib/auth";
 import { getSalonByAccount } from "@/lib/queries";
 import { format } from "date-fns";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import SlotForm from "./SlotForm";
 
-const TIERS = [
-  {
-    value: "QUICK",
-    label: "Quick",
-    desc: "Trim, blowout, toner",
-    duration: "Up to 45 min",
-    fee: "$5",
-    color: "#5a9e95",
-    bg: "rgba(90,158,149,0.1)",
-  },
-  {
-    value: "FULL",
-    label: "Full",
-    desc: "Cut + colour, highlights",
-    duration: "Up to 90 min",
-    fee: "$10",
-    color: "#e8829a",
-    bg: "rgba(232,130,154,0.1)",
-  },
-  {
-    value: "PREMIUM",
-    label: "Premium",
-    desc: "Balayage, treatments",
-    duration: "Up to 2.5 hrs",
-    fee: "$15",
-    color: "#9b7fc8",
-    bg: "rgba(155,127,200,0.1)",
-  },
-] as const;
 
 const TIER_META: Record<string, { color: string; bg: string; label: string }> = {
   QUICK: { color: "#5a9e95", bg: "rgba(90,158,149,0.12)", label: "Quick" },
@@ -103,7 +75,7 @@ export default async function SalonDashboard() {
             href="/redeem"
             target="_blank"
             className="rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90"
-            style={{ background: "var(--charcoal)", boxShadow: "0 4px 12px rgba(61,44,53,0.2)" }}
+            style={{ background: "var(--pink)", boxShadow: "0 4px 14px rgba(232,130,154,0.35)" }}
           >
             Redeem voucher →
           </Link>
@@ -296,167 +268,7 @@ export default async function SalonDashboard() {
           <h2 className="mb-4 text-xl font-bold" style={{ color: "var(--charcoal)" }}>
             Post a slot
           </h2>
-          <form
-            action={createSlotAction}
-            className="flex flex-col gap-5 rounded-3xl p-6 sm:p-7"
-            style={{
-              background: "rgba(255,255,255,0.95)",
-              border: "1.5px solid rgba(232,130,154,0.15)",
-              boxShadow: "0 8px 40px rgba(61,44,53,0.08)",
-            }}
-          >
-            <input type="hidden" name="salonId" value={salonId} />
-
-            {/* Tier selector */}
-            <fieldset>
-              <legend
-                className="mb-3 text-xs font-semibold uppercase tracking-[0.3em]"
-                style={{ color: "var(--muted)" }}
-              >
-                Appointment tier
-              </legend>
-              <div className="grid grid-cols-3 gap-2">
-                {TIERS.map(({ value, label, desc, duration, color, bg }) => (
-                  <label
-                    key={value}
-                    className="flex cursor-pointer flex-col gap-1.5 rounded-2xl border p-3 transition-all has-[:checked]:border-pink-300"
-                    style={{ borderColor: "rgba(232,130,154,0.2)" }}
-                  >
-                    <input
-                      type="radio"
-                      name="tier"
-                      value={value}
-                      defaultChecked={value === "FULL"}
-                      className="sr-only"
-                    />
-                    <span
-                      className="rounded-full px-2 py-0.5 text-xs font-bold self-start"
-                      style={{ background: bg, color }}
-                    >
-                      {label}
-                    </span>
-                    <span className="text-xs font-medium" style={{ color: "var(--charcoal)" }}>
-                      {desc}
-                    </span>
-                    <span className="text-xs" style={{ color: "var(--muted)" }}>
-                      {duration}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-
-            {/* Service */}
-            <label className="flex flex-col gap-1.5">
-              <span
-                className="text-xs font-semibold uppercase tracking-[0.3em]"
-                style={{ color: "var(--muted)" }}
-              >
-                Service
-              </span>
-              <select
-                name="serviceId"
-                className="w-full rounded-2xl border px-4 py-3 text-sm"
-                style={{
-                  borderColor: "rgba(232,130,154,0.2)",
-                  background: "rgba(253,240,245,0.5)",
-                  color: "var(--charcoal)",
-                }}
-              >
-                {salon.services.map((service) => (
-                  <option key={service.id} value={service.id}>
-                    {service.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            {/* Start time */}
-            <label className="flex flex-col gap-1.5">
-              <span
-                className="text-xs font-semibold uppercase tracking-[0.3em]"
-                style={{ color: "var(--muted)" }}
-              >
-                Start time
-              </span>
-              <input
-                type="datetime-local"
-                name="startTime"
-                defaultValue={new Date().toISOString().slice(0, 16)}
-                className="w-full rounded-2xl border px-4 py-3 text-sm"
-                style={{
-                  borderColor: "rgba(232,130,154,0.2)",
-                  background: "rgba(253,240,245,0.5)",
-                  color: "var(--charcoal)",
-                }}
-              />
-            </label>
-
-            {/* Discount % */}
-            <label className="flex flex-col gap-1.5">
-              <div className="flex items-center justify-between">
-                <span
-                  className="text-xs font-semibold uppercase tracking-[0.3em]"
-                  style={{ color: "var(--muted)" }}
-                >
-                  Discount
-                </span>
-                <span
-                  className="rounded-full px-3 py-1 text-sm font-bold"
-                  style={{ background: "rgba(232,130,154,0.1)", color: "var(--pink)" }}
-                >
-                  25% off
-                </span>
-              </div>
-              <input
-                type="range"
-                name="discountPercent"
-                min={10}
-                max={50}
-                step={5}
-                defaultValue={25}
-                className="w-full"
-                style={{ accentColor: "var(--pink)" }}
-              />
-              <div className="flex justify-between text-xs" style={{ color: "var(--muted)" }}>
-                <span>10%</span>
-                <span>50%</span>
-              </div>
-            </label>
-
-            {/* Deal price */}
-            <label className="flex flex-col gap-1.5">
-              <span
-                className="text-xs font-semibold uppercase tracking-[0.3em]"
-                style={{ color: "var(--muted)" }}
-              >
-                Deal price ($)
-              </span>
-              <div className="flex items-center gap-2">
-                <span className="text-base font-semibold" style={{ color: "var(--muted)" }}>$</span>
-                <input
-                  type="number"
-                  name="price"
-                  defaultValue={90}
-                  min={1}
-                  className="flex-1 rounded-2xl border px-4 py-3 text-sm"
-                  style={{
-                    borderColor: "rgba(232,130,154,0.2)",
-                    background: "rgba(253,240,245,0.5)",
-                    color: "var(--charcoal)",
-                  }}
-                />
-              </div>
-            </label>
-
-            <button
-              type="submit"
-              className="mt-2 w-full rounded-full py-4 text-base font-bold text-white transition-all hover:opacity-90"
-              style={{ background: "var(--pink)", boxShadow: "0 4px 14px rgba(232,130,154,0.35)" }}
-            >
-              Publish slot
-            </button>
-          </form>
+          <SlotForm salonId={salonId} services={salon.services} />
         </section>
       </div>
 

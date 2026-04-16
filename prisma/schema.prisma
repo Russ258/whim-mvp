@@ -9,21 +9,21 @@ datasource db {
 }
 
 model Salon {
-  id            Int           @id @default(autoincrement())
-  name          String
-  description   String
-  city          String
-  address       String
-  rating        Float         @default(4.7)
-  distanceKm    Float
-  heroImage     String?
-  category      String        @default("HAIR")
-  email         String?
-  phone         String?
-  services      Service[]
-  slots         DealSlot[]
-  salonAccount  SalonAccount?
-  createdAt     DateTime      @default(now())
+  id           Int           @id @default(autoincrement())
+  name         String
+  description  String
+  city         String
+  address      String
+  rating       Float         @default(4.7)
+  distanceKm   Float
+  heroImage    String?
+  category     String        @default("HAIR")
+  email        String?
+  phone        String?
+  createdAt    DateTime      @default(now())
+  slots        DealSlot[]
+  salonAccount SalonAccount?
+  services     Service[]
 }
 
 model SalonApplication {
@@ -43,11 +43,11 @@ model SalonApplication {
 model SalonAccount {
   id          Int       @id @default(autoincrement())
   salonId     Int       @unique
-  salon       Salon     @relation(fields: [salonId], references: [id])
   email       String    @unique
   loginToken  String    @unique
   tokenExpiry DateTime?
   createdAt   DateTime  @default(now())
+  salon       Salon     @relation(fields: [salonId], references: [id])
 }
 
 model Service {
@@ -56,38 +56,38 @@ model Service {
   tier        String     @default("QUICK")
   durationMin Int
   basePrice   Int
-  salon       Salon      @relation(fields: [salonId], references: [id])
   salonId     Int
   slots       DealSlot[]
+  salon       Salon      @relation(fields: [salonId], references: [id])
 }
 
 model DealSlot {
   id              Int       @id @default(autoincrement())
-  salon           Salon     @relation(fields: [salonId], references: [id])
   salonId         Int
-  service         Service   @relation(fields: [serviceId], references: [id])
   serviceId       Int
   startTime       DateTime
   endTime         DateTime
   discountPercent Int
   price           Int
   status          String    @default("AVAILABLE")
-  bookings        Booking[]
   createdAt       DateTime  @default(now())
+  bookings        Booking[]
+  salon           Salon     @relation(fields: [salonId], references: [id])
+  service         Service   @relation(fields: [serviceId], references: [id])
 }
 
 model Booking {
-  id            Int      @id @default(autoincrement())
-  slot          DealSlot @relation(fields: [slotId], references: [id])
+  id            Int       @id @default(autoincrement())
   slotId        Int
   customerName  String
   customerEmail String
-  status        String   @default("CONFIRMED")
-  paymentStatus String   @default("PAID")
+  status        String    @default("CONFIRMED")
+  paymentStatus String    @default("PAID")
   notes         String?
   voucherCode   String    @unique
   redeemedAt    DateTime?
   createdAt     DateTime  @default(now())
+  slot          DealSlot  @relation(fields: [slotId], references: [id])
 }
 
 model NotificationPreference {
@@ -108,11 +108,19 @@ model PromoCode {
 }
 
 model PaymentMethod {
-  id            Int    @id @default(autoincrement())
+  id            Int     @id @default(autoincrement())
   customerEmail String
   brand         String
   last4         String
   expiryMonth   Int
   expiryYear    Int
   primary       Boolean @default(false)
+}
+
+model WaitlistEntry {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  promoCode   String   @unique
+  earlyAccess Boolean  @default(true)
+  createdAt   DateTime @default(now())
 }
