@@ -125,7 +125,7 @@ export default function WaitlistForm({ initialCount }: { initialCount: number })
           className="inline-block h-2 w-2 rounded-full"
           style={{ background: "var(--pink)" }}
         />
-        First 500 members get an extra 10% off, forever
+        First 100 members get an extra 10% off, forever
       </div>
 
       {/* Form */}
