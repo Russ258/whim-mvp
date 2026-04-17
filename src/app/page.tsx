@@ -173,7 +173,7 @@ export default async function LandingPage() {
         style={{ background: "var(--pink)", color: "#fff" }}
       >
         <span className="uppercase">
-          Launching in Sydney &nbsp;·&nbsp; Early members get 10% off forever &nbsp;·&nbsp; No card needed
+          Launching in Sydney &nbsp;·&nbsp; First 100 members get founding status &nbsp;·&nbsp; No card needed
         </span>
       </div>
 

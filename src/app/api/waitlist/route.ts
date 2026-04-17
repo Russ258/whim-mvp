@@ -49,8 +49,8 @@ export async function POST(req: NextRequest) {
   await prisma.promoCode.create({
     data: {
       code: promoCode,
-      description: "Early access — 10% off your first Whim booking",
-      discountPercent: 10,
+      description: "Founding member — priority access to new salons and best slots",
+      discountPercent: 0,
       active: true,
     },
   });
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
         from: `Whim <${fromEmail}>`,
         to: email,
         subject: earlyAccess
-          ? "You're in — your early access code is here"
+          ? "Welcome to Whim — you're a founding member"
           : "You're on the Whim waitlist",
         html: earlyAccess
           ? `<!DOCTYPE html>
@@ -77,17 +77,16 @@ export async function POST(req: NextRequest) {
       <div style="font-size:30px;font-weight:800;letter-spacing:-1px;">Whim</div>
     </div>
     <div style="padding:32px;">
-      <h2 style="margin:0 0 8px;font-size:22px;color:#3d2c35;">You made the list.</h2>
+      <h2 style="margin:0 0 8px;font-size:22px;color:#3d2c35;">You're a founding member.</h2>
       <p style="color:#a08c96;line-height:1.6;margin:0 0 24px;">
-        You're one of our early members — which means you get <strong>an extra 10% off every booking</strong>, forever.
-        Save your personal code below and use it when Whim launches.
+        You're one of the first 100 people on Whim — which means you get <strong>priority access to new salons and the best slots</strong> before anyone else. Save your founding member code below.
       </p>
       <div style="background:#fdf0f5;border-radius:14px;padding:20px;text-align:center;margin-bottom:24px;border:1px solid rgba(232,130,154,0.2);">
-        <p style="margin:0 0 6px;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:1px;">Your early access code</p>
+        <p style="margin:0 0 6px;font-size:12px;color:#a08c96;text-transform:uppercase;letter-spacing:1px;">Your founding member code</p>
         <p style="margin:0;font-size:28px;font-weight:800;color:#e8829a;letter-spacing:3px;">${promoCode}</p>
       </div>
       <p style="color:#a08c96;font-size:13px;line-height:1.6;margin:0;">
-        We'll email you the moment Whim goes live in Sydney. In the meantime, follow us on Instagram for sneak peeks.
+        We'll email you the moment Whim goes live in Sydney this winter. Follow us on Instagram <strong>@whim_au</strong> for sneak peeks.
       </p>
     </div>
     <div style="background:#fdf6f9;padding:14px 24px;text-align:center;border-top:1px solid rgba(232,130,154,0.12);">

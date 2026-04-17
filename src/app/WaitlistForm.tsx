@@ -56,7 +56,7 @@ export default function WaitlistForm({ initialCount }: { initialCount: number })
                 className="mb-4 text-2xl font-bold"
                 style={{ fontFamily: "var(--font-playfair)", color: "var(--charcoal)" }}
               >
-                Your early access code
+                You're a founding member
               </p>
               <div
                 className="mb-4 rounded-2xl px-6 py-4"
@@ -70,9 +70,9 @@ export default function WaitlistForm({ initialCount }: { initialCount: number })
                 </p>
               </div>
               <p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
-                Extra 10% off every booking, forever.
+                Skip the queue. First access to new salons and the best slots.
                 <br />
-                Check your email — we sent it there too.
+                Check your email — we sent your founding member code there too.
               </p>
             </div>
             <p className="text-sm font-medium" style={{ color: "var(--muted)" }}>
@@ -125,7 +125,7 @@ export default function WaitlistForm({ initialCount }: { initialCount: number })
           className="inline-block h-2 w-2 rounded-full"
           style={{ background: "var(--pink)" }}
         />
-        First 100 members get an extra 10% off, forever
+        First 100 members get founding member status
       </div>
 
       {/* Form */}
