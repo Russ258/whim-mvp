@@ -174,3 +174,9 @@ export async function getAdminBookings() {
     take: 50,
   });
 }
+
+export async function getWaitlistEntries() {
+  return prisma.waitlistEntry.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+}

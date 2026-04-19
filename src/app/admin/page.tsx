@@ -1,7 +1,7 @@
 import { createSalonAction } from "@/app/actions/admin";
 import { approveSalonApplication, declineSalonApplication } from "@/app/actions/salon-admin";
 import { getActiveRole } from "@/lib/auth";
-import { getAdminBookings, getSalonApplications, getSalons } from "@/lib/queries";
+import { getAdminBookings, getSalonApplications, getSalons, getWaitlistEntries } from "@/lib/queries";
 import { format } from "date-fns";
 import Link from "next/link";
 
@@ -51,19 +51,23 @@ export default async function AdminPage({
   const params = await searchParams;
   const activeTab = params.tab ?? "applications";
 
-  const [applications, salons, bookings] = await Promise.all([
+  const [applications, salons, bookings, waitlist] = await Promise.all([
     getSalonApplications(),
     getSalons(),
     getAdminBookings(),
+    getWaitlistEntries(),
   ]);
 
   const pendingCount = applications.filter((a) => a.status === "PENDING").length;
   const approvedCount = applications.filter((a) => a.status === "APPROVED").length;
 
+  const earlyAccessCount = waitlist.filter((w) => w.earlyAccess).length;
+
   const tabs = [
     { id: "applications", label: "Applications", badge: pendingCount > 0 ? pendingCount : undefined },
     { id: "salons", label: "Salons" },
     { id: "bookings", label: "Bookings" },
+    { id: "waitlist", label: "Waitlist", badge: waitlist.length > 0 ? waitlist.length : undefined },
   ];
 
   return (
@@ -451,6 +455,87 @@ export default async function AdminPage({
                     </div>
                   );
                 })
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+      {/* ---- WAITLIST TAB ---- */}
+      {activeTab === "waitlist" && (
+        <section className="flex flex-col gap-6">
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              { label: "Total signups", value: waitlist.length, color: "var(--charcoal)", bg: "rgba(255,255,255,0.9)" },
+              { label: "Founding members", value: earlyAccessCount, color: "#e8829a", bg: "rgba(232,130,154,0.1)" },
+              { label: "Spots remaining", value: Math.max(0, 100 - earlyAccessCount), color: "#5a9e95", bg: "rgba(90,158,149,0.1)" },
+            ].map(({ label, value, color, bg }) => (
+              <div
+                key={label}
+                className="rounded-3xl p-5"
+                style={{ background: bg, border: "1px solid rgba(232,130,154,0.12)" }}
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.3em]" style={{ color: "var(--muted)" }}>
+                  {label}
+                </p>
+                <p className="mt-1 text-4xl font-bold" style={{ fontFamily: "var(--font-playfair)", color }}>
+                  {value}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Entries table */}
+          <div
+            className="rounded-3xl overflow-hidden"
+            style={{
+              background: "rgba(255,255,255,0.95)",
+              border: "1px solid rgba(232,130,154,0.12)",
+              boxShadow: "0 4px 20px rgba(61,44,53,0.05)",
+            }}
+          >
+            <div className="p-6 pb-0">
+              <h3 className="text-lg font-bold" style={{ color: "var(--charcoal)" }}>
+                All signups ({waitlist.length})
+              </h3>
+            </div>
+            <div className="mt-4 divide-y" style={{ divideColor: "rgba(232,130,154,0.1)" }}>
+              {waitlist.length === 0 ? (
+                <p className="p-6 text-sm" style={{ color: "var(--muted)" }}>No signups yet.</p>
+              ) : (
+                waitlist.map((entry) => (
+                  <div key={entry.id} className="flex flex-wrap items-center justify-between gap-3 px-6 py-4">
+                    <div className="min-w-0 flex-1">
+                      <a
+                        href={`mailto:${entry.email}`}
+                        className="font-semibold hover:opacity-70"
+                        style={{ color: "var(--charcoal)" }}
+                      >
+                        {entry.email}
+                      </a>
+                      <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>
+                        Joined {format(entry.createdAt, "d MMM yyyy, h:mma")}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      {entry.promoCode && (
+                        <span className="font-mono text-xs font-bold tracking-widest" style={{ color: "var(--pink)" }}>
+                          {entry.promoCode}
+                        </span>
+                      )}
+                      <span
+                        className="rounded-full px-3 py-1 text-xs font-bold"
+                        style={
+                          entry.earlyAccess
+                            ? { background: "rgba(232,130,154,0.12)", color: "#e8829a" }
+                            : { background: "rgba(61,44,53,0.06)", color: "var(--muted)" }
+                        }
+                      >
+                        {entry.earlyAccess ? "Founding member" : "Waitlist"}
+                      </span>
+                    </div>
+                  </div>
+                ))
               )}
             </div>
           </div>
